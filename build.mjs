@@ -95,6 +95,68 @@ async function copyBrand() {
   await copyFile(join(src, 'assets', 'brand', 'logo.png'), join(out, 'assets', 'photos', 'logo.png'));
 }
 
+/**
+ * Checks the menu data before rendering.
+ *
+ * A syntax error already stops the build with a line number, but the mistakes a
+ * non-developer actually makes are valid JavaScript: a price typed as "$9.95",
+ * a comma instead of a decimal point, two items sharing a number. Those would
+ * render happily and reach customers. Fail the build with a plain-English
+ * message instead.
+ */
+function validateMenu() {
+  const problems = [];
+  const seen = new Map();
+
+  for (const category of menu) {
+    if (!category.name) problems.push(`A menu category is missing its "name".`);
+
+    for (const item of category.items) {
+      const where = `Item ${item.ref ?? '(no number)'}`;
+
+      if (!item.ref) problems.push(`${where}: every item needs a "ref" — the number printed on the menu.`);
+      else if (seen.has(item.ref)) problems.push(`${where}: this number is used twice (also on "${seen.get(item.ref)}"). Each item needs its own.`);
+      else seen.set(item.ref, item.name);
+
+      if (!item.name || !item.name.trim()) problems.push(`${where}: the "name" is empty.`);
+
+      const priceProblem = (label, value) => {
+        if (value === undefined || value === null || value === '')
+          return `${where}: ${label} is missing.`;
+        if (typeof value !== 'string')
+          return `${where}: ${label} must be in quotes, like '9.95'.`;
+        if (!/^\d+\.\d{2}$/.test(value))
+          return `${where}: ${label} reads "${value}". Write it as digits only with two decimals and no dollar sign — '9.95', not '$9.95' or '9,95' or '9.9'.`;
+        return null;
+      };
+
+      const p = priceProblem('the price', item.price);
+      if (p) problems.push(p);
+
+      for (const v of item.variants || []) {
+        const vp = priceProblem(`the price for "${v.name}"`, v.price);
+        if (vp) problems.push(vp);
+      }
+    }
+  }
+
+  // A gallery tile pointing at a number that no longer exists renders a tile
+  // with no name and no price.
+  for (const g of gallery) {
+    if (g.ref && !seen.has(g.ref))
+      problems.push(`Gallery tile "${g.slot}" points at item ${g.ref}, which is not on the menu. Either add that item back or change the tile's "ref".`);
+  }
+
+  if (problems.length) {
+    throw new Error(
+      `The menu has ${problems.length} problem${problems.length === 1 ? '' : 's'}:\n\n` +
+        problems.map((p) => `  • ${p}`).join('\n') +
+        `\n\nNothing was published. Fix the above in src/data/restaurant.js and save.\n` +
+        `The website currently online is unaffected.`
+    );
+  }
+}
+
 /** Every image slot in the data, so the build can report what is still empty. */
 function photoSlots() {
   return [
@@ -135,6 +197,10 @@ async function copyPhotos() {
 }
 
 async function main() {
+  // Validate BEFORE clearing dist/, so a rejected edit leaves the last good
+  // build untouched on disk as well as online.
+  validateMenu();
+
   await rm(out, { recursive: true, force: true });
   await mkdir(out, { recursive: true });
 

@@ -37,6 +37,18 @@ files are concatenated into one `dist/styles/main.css`.
 The schema.org `Restaurant` block is generated from the same data, so the
 structured data can't drift from the page.
 
+**The build validates the menu before rendering** — see `validateMenu` in
+`build.mjs`. A syntax error already stops the build with a line number, but the
+mistakes a non-developer actually makes are *valid JavaScript*: `'$9.95'`,
+`'16,95'`, `'16'`, two dishes sharing a number, a gallery tile pointing at a
+deleted item. Those would render happily and reach customers. The check fails
+the build with a plain-English message naming the item, and runs **before**
+`dist/` is cleared so a rejected edit leaves the last good build intact.
+
+Hand [`EDITING-THE-MENU.md`](EDITING-THE-MENU.md) to the owner — it explains
+editing prices, dishes, hours and the offer banner from the GitHub web editor,
+with no terminal and nothing to install.
+
 ### The paper/ink rhythm
 
 Sections alternate between warm paper and near-black ink:
