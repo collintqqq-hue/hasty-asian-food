@@ -36,8 +36,8 @@ export function header() {
     </nav>
 
     <div class="site-header__actions">
-      <a class="btn btn--solid btn--sm" href="${contact.phoneHref}">
-        ${icons.phone}<span>Call to order</span>
+      <a class="btn btn--solid btn--sm" href="${contact.phoneHref}" aria-label="Call to order">
+        ${icons.phone}<span>Call<span class="btn__rest"> to order</span></span>
       </a>
     </div>
   </div>
@@ -56,7 +56,7 @@ export function hero() {
     <div class="hero__top">
       <p class="eyebrow hero__eyebrow" data-reveal>
         <span class="eyebrow__dot" aria-hidden="true"></span>
-        ${esc(location.inside)} · Carling Avenue
+        <span>${esc(location.inside)}<span class="hero__eyebrow-street"> · Carling Avenue</span></span>
       </p>
       ${
         offer.active

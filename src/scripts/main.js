@@ -55,34 +55,56 @@ function initSplash() {
   setTimeout(remove, 1500);
 }
 
-/* ────────────────────────── header ────────────────────────── */
+/* ─────────────────────── menu category spy ────────────────────── */
 
-function initScrollChrome() {
-  const header = document.querySelector('[data-header]');
-  const hero = document.querySelector('.hero');
-  if (!header || !hero) return;
+/**
+ * Highlights the menu category you are currently reading.
+ *
+ * This deliberately does NOT use IntersectionObserver. An observer only reports
+ * elements crossing a band, so whenever no category happened to sit inside that
+ * band — between two groups, or past the last one — every tab went dark, and
+ * the highlight lagged a whole group behind while two overlapped.
+ *
+ * A reference line is unambiguous: the active category is simply the last one
+ * whose heading has passed it. Exactly one tab is always lit.
+ */
+function initMenuSpy() {
+  const tabs = [...document.querySelectorAll('.menu-tab')];
+  const groups = [...document.querySelectorAll('.menu-group')];
+  if (!tabs.length || !groups.length) return;
 
-  // Sentinel sits at the point where the hero stops covering the header.
-  const trigger = Math.max(hero.offsetHeight - header.offsetHeight * 2, 120);
+  let current = null;
 
-  let ticking = false;
   const update = () => {
-    // Desktop only: the header sits transparent over the hero, then becomes
-    // solid. On phones CSS keeps it solid throughout, so this is inert there.
-    header.classList.toggle('is-stuck', window.scrollY > trigger);
-    ticking = false;
+    const line = window.innerHeight * 0.35;
+
+    // Last group whose top has crossed the line; the first group before that.
+    let id = groups[0].id;
+    for (const g of groups) {
+      if (g.getBoundingClientRect().top <= line) id = g.id;
+      else break;
+    }
+    id = id.replace('cat-', '');
+
+    if (id === current) return;
+    current = id;
+    for (const t of tabs) t.classList.toggle('is-active', t.dataset.tab === id);
   };
 
+  let ticking = false;
   window.addEventListener(
     'scroll',
     () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(update);
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
     },
     { passive: true }
   );
-
+  window.addEventListener('resize', update, { passive: true });
   update();
 }
 
@@ -118,6 +140,5 @@ function initSpy(linkSelector, targetSelector, activeClass = 'is-active') {
 
 initSplash();
 initReveal();
-initScrollChrome();
-initSpy('.menu-tab', '.menu-group');
+initMenuSpy();
 initSpy('.nav__link', 'main > section[id]');

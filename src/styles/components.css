@@ -182,32 +182,21 @@
 
 /* ─────────────────────────── header ─────────────────────────── */
 
+/* One constant dark bar at every width and every scroll position. It used to
+   fade from transparent to paper, which meant the hero headline scrolled up
+   through the wordmark and the colour flip pulled the eye. Being opaque and
+   unchanging removes both problems, and over the paper sections the dark band
+   reads as a deliberate frame rather than an accident. */
 .site-header {
   position: fixed;
   inset: 0 0 auto;
   z-index: 100;
   height: var(--header-h);
+  background: color-mix(in srgb, var(--ink) 90%, transparent);
+  backdrop-filter: saturate(1.3) blur(14px);
   color: var(--on-ink);
-  transition: background 0.4s var(--ease), color 0.4s var(--ease),
-    box-shadow 0.4s var(--ease), backdrop-filter 0.4s var(--ease);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--brass) 30%, transparent);
 }
-.site-header::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(10, 8, 7, 0.55), transparent);
-  opacity: 1;
-  transition: opacity 0.4s var(--ease);
-  pointer-events: none;
-}
-
-.site-header.is-stuck {
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-  backdrop-filter: saturate(1.4) blur(14px);
-  color: var(--on-paper);
-  box-shadow: 0 1px 0 var(--paper-3);
-}
-.site-header.is-stuck::after { opacity: 0; }
 
 .site-header__inner {
   display: flex;
@@ -217,21 +206,25 @@
   height: 100%;
 }
 
-.wordmark { display: grid; align-content: center; min-height: 2.75rem; line-height: 1.1; }
+.wordmark { display: grid; align-content: center; gap: 0.18rem; min-height: 2.75rem; line-height: 1.05; }
 .wordmark__name {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 1.2rem;
+  font-weight: 400;
+  /* Optical settings: a touch of tracking and a lighter weight read as
+     engraved rather than bold. Weight is where "premium" is usually lost. */
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+  letter-spacing: 0.045em;
 }
 .wordmark__name--sm { font-size: 1rem; }
 .wordmark__name--lg { font-size: var(--step-2); }
 .wordmark__host {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  opacity: 0.68;
+  color: var(--brass);
+  opacity: 0.95;
 }
 
 /* Always visible. On phones it wraps to its own row beneath the wordmark so the
@@ -242,9 +235,12 @@
 .nav__link {
   position: relative;
   padding: 0.4rem 0;
-  font-size: var(--step--1);
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  /* Small letterspaced caps — the single strongest "expensive" typographic
+     signal, and it stays legible because the tracking does the work, not size. */
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 .nav__link::after {
   content: '';
@@ -259,6 +255,14 @@
 .nav__link:hover::after, .nav__link.is-active::after { scale: 1 1; }
 
 .site-header__actions { display: flex; align-items: center; gap: var(--space-xs); }
+.site-header__actions .btn {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding-inline: 1.15rem;
+}
+
 .site-header__actions .btn--solid { display: none; }
 @media (min-width: 48rem) { .site-header__actions .btn--solid { display: inline-flex; } }
 
@@ -269,14 +273,6 @@
    button; row two is the four section links. Nothing else is pinned to the
    screen: no menu button, no bottom bar. */
 @media (max-width: 59.99rem) {
-  .site-header {
-    background: color-mix(in srgb, var(--paper) 93%, transparent);
-    backdrop-filter: saturate(1.4) blur(16px);
-    color: var(--on-paper);
-    box-shadow: 0 1px 0 var(--paper-3);
-    transition: none;
-  }
-  .site-header::after { content: none; }
 
   .site-header__inner {
     flex-wrap: wrap;
@@ -287,18 +283,22 @@
     column-gap: var(--space-sm);
   }
   .wordmark { order: 1; min-height: 2.25rem; }
-  /* One line only — the hero says "at Hasty Market" directly underneath. */
-  .wordmark__host { display: none; }
-  .wordmark__name { font-size: 1.02rem; }
+  .wordmark__name { font-size: 1.06rem; letter-spacing: 0.05em; }
 
   .site-header__actions { order: 2; }
   .site-header__actions .btn--solid { display: inline-flex; }
+  /* Uppercase tracking made "Call to order" 168px wide, which with the 180px
+     wordmark overflowed the 335px row and pushed the bar to three lines. The
+     accessible name stays "Call to order". */
+  .btn__rest { display: none; }
+  .site-header__actions .btn { padding-inline: 0.9rem; }
 
   .nav {
     order: 3;
     flex: 1 0 100%;
     margin-top: 0.15rem;
-    border-top: 1px solid var(--paper-3);
+    /* currentColor so the rule adapts as the bar flips light/dark. */
+    border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
     padding-top: 0.2rem;
   }
   .nav__list {
@@ -312,9 +312,10 @@
     flex: none;
     display: inline-flex;
     align-items: center;
-    padding: 0.45rem 0.7rem;
+    padding: 0.45rem 0.6rem;
     min-height: 2.25rem;
-    font-size: 0.875rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
     white-space: nowrap;
     border-radius: 999px;
     transition: background 0.25s var(--ease), color 0.25s var(--ease);
@@ -323,9 +324,9 @@
      to read at a glance on a small bar. */
   .nav__link::after { content: none; }
   .nav__link.is-active {
-    background: color-mix(in srgb, var(--red) 10%, transparent);
-    color: var(--red);
     font-weight: 600;
+    background: color-mix(in srgb, var(--brass) 22%, transparent);
+    color: var(--brass-soft);
   }
 }
 
@@ -453,6 +454,9 @@
   /* Keep the whole hero inside one screen now the header carries a second row. */
   .hero { padding-block: calc(var(--header-h) + 0.75rem) var(--space-lg); }
   .hero__badge { display: none; }
+  /* Wrapped to two lines and orphaned the bullet. The street is already in the
+     facts row a few lines below, so drop it here rather than let it wrap. */
+  .hero__eyebrow-street { display: none; }
   .hero__facts {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -800,7 +804,14 @@
     border-top: 0;
   }
   .menu-nav__list { padding-block: 0 0.5rem; gap: 0.3rem; }
-  .menu-tab { padding: 0.45rem 0.8rem; min-height: 2.25rem; font-size: 0.8125rem; }
+  .menu-tab {
+    padding: 0.45rem 0.85rem;
+    min-height: 2.25rem;
+    font-size: 0.8125rem;
+    /* Three tabs share ~335px, so each broke onto two lines. The row already
+       scrolls horizontally — let them run off the edge instead of stacking. */
+    white-space: nowrap;
+  }
 
   .menu__body { gap: var(--space-xl); }
   .menu-item {
