@@ -81,6 +81,11 @@ async function buildScripts() {
   await copyFile(join(src, 'scripts', 'main.js'), join(out, 'scripts', 'main.js'));
 }
 
+/** Favicon lives at the site root, where browsers and crawlers expect it. */
+async function copyFavicon() {
+  await copyFile(join(src, 'assets', 'favicon.svg'), join(out, 'favicon.svg'));
+}
+
 /** Every image slot in the data, so the build can report what is still empty. */
 function photoSlots() {
   return [
@@ -127,6 +132,7 @@ async function main() {
   const menuPdfSize = await copyMenuPdf();
   const [htmlBytes, cssBytes] = await Promise.all([buildHtml({ menuPdfSize }), buildStyles()]);
   await buildScripts();
+  await copyFavicon();
   const files = await copyPhotos();
   const p = reportPhotos(files);
 

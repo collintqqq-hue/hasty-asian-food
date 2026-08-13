@@ -38,11 +38,27 @@ function initReveal() {
   }, 2500);
 }
 
-/* ─────────────────── header + order bar ───────────────────── */
+/* ────────────────────────── splash ────────────────────────── */
+
+/**
+ * The overlay covers everything, so it gets removed from the DOM rather than
+ * merely faded. Two triggers: the animation finishing, and a hard timeout in
+ * case the animation never runs (reduced motion, a background tab, animations
+ * disabled). Whichever fires first wins.
+ */
+function initSplash() {
+  const splash = document.querySelector('.splash');
+  if (!splash) return;
+
+  const remove = () => splash.remove();
+  splash.addEventListener('animationend', remove, { once: true });
+  setTimeout(remove, 1500);
+}
+
+/* ────────────────────────── header ────────────────────────── */
 
 function initScrollChrome() {
   const header = document.querySelector('[data-header]');
-  const orderbar = document.querySelector('[data-orderbar]');
   const hero = document.querySelector('.hero');
   if (!header || !hero) return;
 
@@ -51,9 +67,9 @@ function initScrollChrome() {
 
   let ticking = false;
   const update = () => {
-    const past = window.scrollY > trigger;
-    header.classList.toggle('is-stuck', past);
-    if (orderbar) orderbar.classList.toggle('is-on', past);
+    // Desktop only: the header sits transparent over the hero, then becomes
+    // solid. On phones CSS keeps it solid throughout, so this is inert there.
+    header.classList.toggle('is-stuck', window.scrollY > trigger);
     ticking = false;
   };
 
@@ -68,92 +84,6 @@ function initScrollChrome() {
   );
 
   update();
-}
-
-/* ────────────────────────── drawer ────────────────────────── */
-
-function initDrawer() {
-  const drawer = document.querySelector('[data-drawer]');
-  const openBtn = document.querySelector('[data-burger]');
-  const closeBtn = document.querySelector('[data-drawer-close]');
-  if (!drawer || !openBtn) return;
-
-  const panel = drawer.querySelector('.drawer__panel');
-  let lastFocused = null;
-
-  const focusables = () =>
-    [...panel.querySelectorAll('a[href], button:not([disabled])')].filter(
-      (el) => el.offsetParent !== null
-    );
-
-  let hideTimer = null;
-
-  function open() {
-    lastFocused = document.activeElement;
-    clearTimeout(hideTimer);
-    drawer.hidden = false;
-    document.body.style.overflow = 'hidden';
-
-    // Force a reflow so the browser registers the pre-transition state.
-    // rAF would be throttled in a background or non-compositing tab, which
-    // would leave the panel parked off-screen with the scrim already up.
-    void drawer.offsetHeight;
-    drawer.classList.add('is-open');
-
-    openBtn.setAttribute('aria-expanded', 'true');
-    focusables()[0]?.focus();
-  }
-
-  function close() {
-    drawer.classList.remove('is-open');
-    document.body.style.overflow = '';
-    openBtn.setAttribute('aria-expanded', 'false');
-
-    // Re-hide on whichever comes first: the close transition ending, or a
-    // timeout. Waiting on transitionend alone would strand a transparent
-    // full-screen scrim over the page if the transition never fires.
-    const done = () => {
-      clearTimeout(hideTimer);
-      panel.removeEventListener('transitionend', done);
-      drawer.hidden = true;
-    };
-    panel.addEventListener('transitionend', done);
-    hideTimer = setTimeout(done, reduceMotion ? 0 : 500);
-
-    // A pointer click never focuses the button, so activeElement may be <body>.
-    const target = lastFocused && lastFocused !== document.body ? lastFocused : openBtn;
-    target.focus();
-  }
-
-  openBtn.addEventListener('click', open);
-  closeBtn?.addEventListener('click', close);
-
-  // Click the scrim, or any link inside, to close.
-  drawer.addEventListener('click', (e) => {
-    if (e.target === drawer || e.target.closest('.drawer__list a, .drawer__foot a')) close();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (drawer.hidden) return;
-    if (e.key === 'Escape') {
-      close();
-      return;
-    }
-    if (e.key !== 'Tab') return;
-
-    // Keep focus inside the open drawer.
-    const list = focusables();
-    if (!list.length) return;
-    const first = list[0];
-    const last = list[list.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  });
 }
 
 /* ──────────────────────── scrollspy ───────────────────────── */
@@ -186,8 +116,8 @@ function initSpy(linkSelector, targetSelector, activeClass = 'is-active') {
 
 /* ─────────────────────────── boot ─────────────────────────── */
 
+initSplash();
 initReveal();
 initScrollChrome();
-initDrawer();
 initSpy('.menu-tab', '.menu-group');
 initSpy('.nav__link', 'main > section[id]');

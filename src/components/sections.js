@@ -39,30 +39,9 @@ export function header() {
       <a class="btn btn--solid btn--sm" href="${contact.phoneHref}">
         ${icons.phone}<span>Call to order</span>
       </a>
-      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false"
-              aria-controls="mobile-nav" data-burger>${icons.menu}</button>
     </div>
   </div>
-</header>
-
-<div class="drawer" id="mobile-nav" data-drawer hidden>
-  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Site menu">
-    <div class="drawer__top">
-      <span class="wordmark__name wordmark__name--sm">${esc(brand.name)}</span>
-      <button class="burger burger--close" type="button" aria-label="Close menu"
-              data-drawer-close>${icons.close}</button>
-    </div>
-    <nav aria-label="Mobile">
-      <ul class="drawer__list">
-        ${nav.map((l) => `<li><a href="${l.href}">${esc(l.label)}${icons.arrow}</a></li>`).join('')}
-      </ul>
-    </nav>
-    <div class="drawer__foot">
-      <a class="btn btn--solid btn--block" href="${contact.phoneHref}">${icons.phone}<span>Call ${esc(contact.phone)}</span></a>
-      <a class="btn btn--ghost btn--block" href="${location.directionsHref}" target="_blank" rel="noopener">${icons.pin}<span>Get directions</span></a>
-    </div>
-  </div>
-</div>`;
+</header>`;
 }
 
 /* ──────────────────────────────  hero  ────────────────────────────── */
@@ -428,15 +407,6 @@ export function footer() {
     <p class="footer__muted">${esc(location.full)}</p>
   </div>
 </footer>`;
-}
-
-/* ─────────────────────────  sticky order bar  ─────────────────────── */
-
-export function orderBar() {
-  return `<div class="orderbar" data-orderbar>
-  <a class="orderbar__btn orderbar__btn--ghost" href="#menu">Menu</a>
-  <a class="orderbar__btn orderbar__btn--solid" href="${contact.phoneHref}">${icons.phone}<span>Call to order</span></a>
-</div>`;
 }
 
 /* ────────────────────────────  helpers  ───────────────────────────── */

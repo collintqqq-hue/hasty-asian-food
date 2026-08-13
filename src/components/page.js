@@ -8,7 +8,6 @@ import {
   gallerySection,
   visit,
   footer,
-  orderBar,
 } from './sections.js';
 
 /** schema.org Restaurant — built from the same data, so it can never drift. */
@@ -68,6 +67,8 @@ export function head() {
 <meta name="description" content="${site.description}">
 <meta name="theme-color" content="${site.themeColor}">
 <link rel="canonical" href="./">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
 
 <meta property="og:type" content="restaurant">
 <meta property="og:site_name" content="${brand.name} at ${brand.host}">
@@ -87,7 +88,17 @@ ${structuredData()}`;
 }
 
 export function body(ctx = {}) {
-  return `${header()}
+  return `<!-- Opening splash. Dismissed by a CSS animation, not JavaScript, so it
+     cannot strand a full-screen overlay if a script fails to run. -->
+<div class="splash" aria-hidden="true">
+  <div class="splash__mark">
+    <span class="splash__name">${brand.name}</span>
+    <span class="splash__rule"></span>
+    <span class="splash__host">at ${brand.host}</span>
+  </div>
+</div>
+
+${header()}
 
 <main id="main">
   ${hero()}
@@ -99,7 +110,6 @@ export function body(ctx = {}) {
 </main>
 
 ${footer()}
-${orderBar()}
 
 <script type="module" src="scripts/main.js"></script>`;
 }

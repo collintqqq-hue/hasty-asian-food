@@ -19,6 +19,7 @@ src/data/restaurant.js      every fact on the site — the single source of trut
 src/components/             photo.js · icons.js · sections.js · page.js
 src/styles/                 tokens.css · base.css · components.css
 src/scripts/main.js         progressive enhancement only
+src/assets/favicon.svg      browser-tab icon, copied to the site root
 src/assets/photos/          drop photography here
 src/assets/menu/            the printed in-store flyer, as a PDF
 tools/flyer-to-pdf.mjs      crops a photo of the flyer into that PDF
@@ -55,21 +56,50 @@ double-ink one when About was first used to patch it.
 
 ### Mobile layout
 
-Phones get their own treatment rather than a squeezed desktop one:
+Phones get their own treatment rather than a squeezed desktop one.
 
-- **The header carries two rows** — wordmark and menu button on top, the four
-  section links beneath. The links are always visible so jumping to the menu is
-  one tap; the button is kept because it holds call and directions.
-- **Gallery captions clamp to two lines.** Full menu names are long
-  ("Rice & Egg Noodles Soup with BBQ Chicken, BBQ Beef…") and on a 162px tile
-  one wrapped to *twelve* lines and overflowed the tile entirely. The full name
-  stays in the DOM for screen readers and in the image `alt`.
-- **Menu rows drop the leader dots** and give the name the full column, so it
-  wraps to fewer lines. Dots are a wide-column device that only squeezed the
-  name here.
-- **`--space-2xl` and `--space-xl` shrink** so the page is not mostly padding.
+**One fixed bar, and only one.** The header is solid from the first pixel —
+paper with a blur, never transparent, never changing colour on scroll. It used
+to fade in from transparent, which meant the wordmark and the hero headline
+overlapped and both became unreadable mid-scroll. Row one is the wordmark and
+the Call to order button; row two is the four section links, with a filled pill
+marking the current section.
 
-Two ordering traps to know about if you edit this CSS. Both cost real time:
+Removed, because they stacked into four competing bars at the menu:
+
+- the hamburger button and its drawer — the four links are always visible now,
+  and Call to order sits in the bar
+- the sticky bottom order bar — it duplicated the header's Call to order
+- the menu category bar's *stickiness* — it is still there as a jump list at the
+  top of the menu, just smaller and no longer pinned
+
+**Gallery captions clamp to two lines.** Full menu names are long
+("Rice & Egg Noodles Soup with BBQ Chicken, BBQ Beef…") and on a 162px tile one
+wrapped to *twelve* lines and overflowed the tile entirely. The full name stays
+in the DOM for screen readers and in the image `alt`.
+
+**Menu rows drop the leader dots** and give the name the full column, so it
+wraps to fewer lines. **`--space-2xl` and `--space-xl` shrink** so the page is
+not mostly padding.
+
+Desktop is untouched: single-row header, transparent over the hero then paper
+once scrolled, leader dots, sticky category bar, three-column gallery.
+
+### The splash screen
+
+A brand card covers the page for under a second on load. It is the most
+dangerous element on the site — if it fails to clear, nothing is visible — so it
+is deliberately over-engineered:
+
+- **Shown only when scripting is confirmed.** `.splash` is `display: none` until
+  the `.js` class is set inline in `<head>`. No JavaScript means no splash at
+  all, rather than a stuck one.
+- **Torn down three ways:** the CSS animation, an `animationend` listener that
+  removes it from the DOM, and a 1.5s hard timeout in case the animation never
+  runs (reduced motion, background tab, animations disabled).
+- `prefers-reduced-motion` skips it entirely.
+
+Two CSS ordering traps to know about if you edit this. Both cost real time:
 
 1. **A mobile `@media` block must come *after* the base rules it overrides.**
    Media queries carry no extra specificity, so a later plain rule wins. This
