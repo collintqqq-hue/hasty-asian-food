@@ -123,36 +123,11 @@ def footer_block(draw, W, y, big_site=True):
     return y + f_sm.size
 
 
-# ─────────────────────────── posters ───────────────────────────
-
-def build_rows(W, scale, kicker, headline_lines, items, logo_frac, headline_frac):
-    """
-    Describe the whole text block as rows, so it can be measured before it is
-    drawn. The first version stacked downward from a fixed y and ran the phone
-    number and address straight off the bottom of the poster.
-    """
-    rows = []
-    rows.append(("logo", int(W * logo_frac * scale), int(W * 0.030 * scale)))
-    rows.append(("text", kicker, font(SANS_BOLD, int(W * 0.024 * scale)), BRASS,
-                 W * 0.006 * scale, int(W * 0.030 * scale)))
-    fh = font(SERIF_BOLD, int(W * headline_frac * scale))
-    for i, line in enumerate(headline_lines):
-        gap = int(fh.size * 0.14) if i < len(headline_lines) - 1 else int(W * 0.028 * scale)
-        rows.append(("text", line, fh, CREAM, 0, gap))
-    rows.append(("rule", int(W * 0.020 * scale)))
-    fi = font(SERIF_ITALIC, int(W * 0.038 * scale))
-    for i, line in enumerate(items):
-        gap = int(fi.size * 0.34) if i < len(items) - 1 else int(W * 0.040 * scale)
-        rows.append(("text", line, fi, BRASS_SOFT, 0, gap))
-    fs = font(SANS_BOLD, int(W * 0.060 * scale))
-    rows.append(("text", SITE, fs, BRASS_SOFT, W * 0.001, int(W * 0.016 * scale)))
-    fp = font(SERIF_BOLD, int(W * 0.054 * scale))
-    rows.append(("text", PHONE, fp, CREAM, 0, int(W * 0.026 * scale)))
-    fsm = font(SANS, int(W * 0.026 * scale))
-    rows.append(("text", ADDRESS, fsm, CREAM, W * 0.0012, int(W * 0.016 * scale)))
-    rows.append(("text", HOURS, fsm, BRASS, W * 0.0022, 0))
-    return rows
-
+# ─────────────────────────── layouts ───────────────────────────
+#
+# Both signs sit ON the building, so the street address is dead weight on each:
+# a driver on Carling can see the place, and anyone reading the window is
+# standing on it. That space buys legibility instead.
 
 def rows_max_width(rows):
     """Widest text row. The fit loop originally checked height only, and
@@ -193,70 +168,83 @@ def draw_rows(img, d, rows, W, y):
     return y
 
 
-def poster(src, out_name, kicker, headline_lines, items, scrim_from=0.42,
-           headline_frac=0.093, logo_frac=0.135):
+def render(src, out_name, build, scrim_from, clear_from):
+    """Shrink the block until it provably fits, then bottom-anchor it."""
     img = Image.open(RAW / src).convert("RGB")
     W, H = img.size
     img = scrim(img, scrim_from, 250)
     d = ImageDraw.Draw(img)
 
-    bottom_margin = int(H * 0.052)
-    top_limit = int(H * (scrim_from + 0.05))
-    available = H - bottom_margin - top_limit
+    bottom = int(H * 0.055)
+    available = H - bottom - int(H * clear_from)
 
-    # Shrink until the whole block fits the clear area. Nothing may overflow the
-    # canvas: a clipped phone number is a wasted print run.
     scale = 1.0
-    while scale > 0.45:
-        rows = build_rows(W, scale, kicker, headline_lines, items, logo_frac, headline_frac)
+    while scale > 0.4:
+        rows = build(W, scale)
         if rows_height(rows) <= available and rows_max_width(rows) <= W * 0.88:
             break
         scale -= 0.02
 
     total = rows_height(rows)
-    y = H - bottom_margin - total
+    y = H - bottom - total
     draw_rows(img, d, rows, W, y)
 
-    assert y >= top_limit * 0.86, f"{out_name}: text block overflows upward"
     assert rows_max_width(rows) <= W * 0.90, f"{out_name}: text wider than canvas"
+    assert y > 0, f"{out_name}: text block overflows the top"
     img.save(OUT / out_name, quality=95, dpi=(300, 300))
-    print(f"  {out_name}  {W}x{H}  (type scale {scale:.2f}, block {total}px)")
+    print(f"  {out_name}  {W}x{H}  (scale {scale:.2f})")
 
 
-def roadsign(src, out_name):
-    """Fewest words possible — this is read from a moving car."""
-    img = Image.open(RAW / src).convert("RGB")
-    W, H = img.size
-    img = scrim(img, 0.38, 250)
-    d = ImageDraw.Draw(img)
-
-    scale = 1.0
-    while scale > 0.4:
-        fh = font(SERIF_BOLD, int(W * 0.145 * scale))
-        fk = font(SANS_BOLD, int(W * 0.034 * scale))
-        fs = font(SANS_BOLD, int(W * 0.080 * scale))
-        fp = font(SERIF_BOLD, int(W * 0.070 * scale))
-        fsm = font(SANS, int(W * 0.028 * scale))
-        rows = [
-            ("text", "VIETNAMESE", fh, CREAM, 0, int(fh.size * 0.08)),
-            ("text", "SUBS", fh, CREAM, 0, int(W * 0.030 * scale)),
-            ("text", "BURGERS · PIZZA · POUTINE", fk, BRASS, W * 0.004 * scale, int(W * 0.034 * scale)),
+def road_sign(src, out_name, line1, line2, also):
+    """
+    Drive-by. Four elements, nothing else — headline, what else we do, the
+    instruction, the website. No address, no hours, no phone: nobody reads a
+    phone number at 50 km/h, and every extra line shrinks the ones that matter.
+    """
+    def build(W, scale):
+        fh = font(SERIF_BOLD, int(W * 0.150 * scale))
+        fa = font(SANS_BOLD, int(W * 0.040 * scale))
+        floc = font(SANS_BOLD, int(W * 0.062 * scale))
+        fs = font(SANS_BOLD, int(W * 0.068 * scale))
+        return [
+            ("text", line1, fh, CREAM, 0, int(fh.size * 0.06)),
+            ("text", line2, fh, CREAM, 0, int(W * 0.028 * scale)),
+            ("text", also, fa, BRASS, W * 0.005 * scale, int(W * 0.034 * scale)),
             ("rule", int(W * 0.030 * scale)),
-            ("text", SITE, fs, BRASS_SOFT, 0, int(W * 0.020 * scale)),
-            ("text", PHONE, fp, CREAM, 0, int(W * 0.024 * scale)),
-            ("text", INSIDE + "  ·  2361 CARLING AVE", fsm, BRASS, W * 0.0022, 0),
+            ("text", INSIDE, floc, CREAM, W * 0.007 * scale, int(W * 0.030 * scale)),
+            ("text", SITE, fs, BRASS_SOFT, 0, 0),
         ]
-        if (rows_height(rows) <= H - int(H * 0.05) - int(H * 0.43)
-                and rows_max_width(rows) <= W * 0.88):
-            break
-        scale -= 0.02
+    render(src, out_name, build, 0.36, 0.40)
 
-    total = rows_height(rows)
-    y = H - int(H * 0.05) - total
-    draw_rows(img, d, rows, W, y)
-    assert rows_max_width(rows) <= W * 0.90, f"{out_name}: text wider than canvas"
-    img.save(OUT / out_name, quality=95, dpi=(300, 300))
-    print(f"  {out_name}  {W}x{H}  (type scale {scale:.2f}, block {total}px)")
+
+def window_sign(src, out_name, kicker, headline_lines, items):
+    """
+    Read from a few feet, standing still. Carries the dish list and — the thing
+    a person at the glass actually wants to know — the hours.
+    """
+    def build(W, scale):
+        rows = [("logo", int(W * 0.125 * scale), int(W * 0.028 * scale))]
+        rows.append(("text", kicker, font(SANS_BOLD, int(W * 0.024 * scale)), BRASS,
+                     W * 0.006 * scale, int(W * 0.028 * scale)))
+        fh = font(SERIF_BOLD, int(W * 0.086 * scale))
+        for i, line in enumerate(headline_lines):
+            gap = int(fh.size * 0.13) if i < len(headline_lines) - 1 else int(W * 0.026 * scale)
+            rows.append(("text", line, fh, CREAM, 0, gap))
+        rows.append(("rule", int(W * 0.020 * scale)))
+        fi = font(SERIF_ITALIC, int(W * 0.038 * scale))
+        for i, line in enumerate(items):
+            gap = int(fi.size * 0.32) if i < len(items) - 1 else int(W * 0.034 * scale)
+            rows.append(("text", line, fi, BRASS_SOFT, 0, gap))
+        rows.append(("text", HOURS, font(SANS_BOLD, int(W * 0.042 * scale)), CREAM,
+                     W * 0.005 * scale, int(W * 0.030 * scale)))
+        rows.append(("text", SITE, font(SANS_BOLD, int(W * 0.056 * scale)), BRASS_SOFT,
+                     W * 0.001, int(W * 0.016 * scale)))
+        rows.append(("text", PHONE, font(SERIF_BOLD, int(W * 0.052 * scale)), CREAM,
+                     0, int(W * 0.016 * scale)))
+        rows.append(("text", INSIDE, font(SANS, int(W * 0.028 * scale)), BRASS,
+                     W * 0.004 * scale, 0))
+        return rows
+    render(src, out_name, build, 0.40, 0.44)
 
 
 def business_card(src):
@@ -320,31 +308,25 @@ def business_card(src):
     print(f"  05-business-card  {W}x{H} (bleed) and {TW}x{TH} (trim)")
 
 
-print("building marketing pieces\n")
+print("building sign options\n")
+print(" ROAD — read from a moving car")
+road_sign("p4-roadsign.png", "ROAD-A-vietnamese.jpg",
+          "VIETNAMESE", "SUBS", "BURGERS · PIZZA · POUTINE")
+road_sign("p3-mixed.png", "ROAD-B-everything.jpg",
+          "ASIAN FOOD", "& MORE", "SUBS · BURGERS · PIZZA · POUTINE")
 
-poster("p1-asian.png", "01-poster-asian.jpg",
-       INSIDE,
-       ["Vietnamese", "Take Out"],
-       ["Banh Mi Subs  \u00b7  Fresh Rolls",
-        "Pad Thai  \u00b7  Vermicelli  \u00b7  Noodle Soup"],
-       scrim_from=0.40)
+print("\n WINDOW — read standing at the glass")
+window_sign("p1-asian.png", "WINDOW-A-asian.jpg",
+            "MADE FRESH TO ORDER",
+            ["Vietnamese", "Take Out"],
+            ["Banh Mi Subs  ·  Fresh Rolls",
+             "Pad Thai  ·  Vermicelli  ·  Noodle Soup"])
+window_sign("p2-comfort.png", "WINDOW-B-comfort.jpg",
+            "NOW SERVING",
+            ["Burgers", "& More"],
+            ["Burgers  ·  Hot Dogs  ·  Pizza",
+             "Poutine  ·  Fries"])
 
-poster("p2-comfort.png", "02-poster-comfort.jpg",
-       "NOW SERVING",
-       ["Burgers", "& More"],
-       ["Burgers  \u00b7  Hot Dogs  \u00b7  Pizza",
-        "Poutine  \u00b7  Fries"],
-       scrim_from=0.43)
-
-poster("p3-mixed.png", "03-poster-everything.jpg",
-       INSIDE,
-       ["Two Kitchens.", "One Counter."],
-       ["Vietnamese Subs  \u00b7  Rolls  \u00b7  Noodles",
-        "Burgers  \u00b7  Hot Dogs  \u00b7  Pizza  \u00b7  Poutine"],
-       scrim_from=0.44, headline_frac=0.082, logo_frac=0.12)
-
-roadsign("p4-roadsign.png", "04-poster-roadsign.jpg")
-
+print()
 business_card("card-bg.png")
-
-print("\ndone \u2014 marketing/out/")
+print("\ndone — marketing/out/")
