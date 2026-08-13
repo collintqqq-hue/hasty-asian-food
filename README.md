@@ -72,12 +72,10 @@ block will not follow the tone unless it uses these variables.
 
 Phones get their own treatment rather than a squeezed desktop one.
 
-**One fixed bar, and only one.** The header is solid from the first pixel —
-paper with a blur, never transparent, never changing colour on scroll. It used
-to fade in from transparent, which meant the wordmark and the hero headline
-overlapped and both became unreadable mid-scroll. Row one is the wordmark and
-the Call to order button; row two is the four section links, with a filled pill
-marking the current section.
+**One fixed bar, and only one.** The header is a constant dark blurred bar at
+every width and scroll position — see the header note above. Row one is the
+wordmark and the Call button; row two is the four section links, with a filled
+pill marking the current section.
 
 Removed, because they stacked into four competing bars at the menu:
 
@@ -87,17 +85,16 @@ Removed, because they stacked into four competing bars at the menu:
 - the menu category bar's *stickiness* — it is still there as a jump list at the
   top of the menu, just smaller and no longer pinned
 
-**Gallery captions clamp to two lines.** Full menu names are long
-("Rice & Egg Noodles Soup with BBQ Chicken, BBQ Beef…") and on a 162px tile one
-wrapped to *twelve* lines and overflowed the tile entirely. The full name stays
-in the DOM for screen readers and in the image `alt`.
+**Gallery captions use short labels.** Full menu names are long, and on a 162px
+tile one wrapped to *twelve* lines and overflowed the tile entirely. See the
+lightbox note below — nothing is truncated.
 
 **Menu rows drop the leader dots** and give the name the full column, so it
 wraps to fewer lines. **`--space-2xl` and `--space-xl` shrink** so the page is
 not mostly padding.
 
-Desktop is untouched: single-row header, transparent over the hero then paper
-once scrolled, leader dots, sticky category bar, three-column gallery.
+Desktop keeps its single-row header, leader dots, sticky category bar and
+three-column gallery.
 
 ### Brand assets and link previews
 
