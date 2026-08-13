@@ -1,0 +1,88 @@
+/* ============================================================
+   TOKENS
+   Palette is taken from the printed flyer: crimson serif wordmark
+   on warm paper, black text, warm food photography.
+   ============================================================ */
+
+:root {
+  /* — colour ————————————————————————————————— */
+  --ink:        #12100e;   /* warm near-black          */
+  --ink-2:      #1b1714;   /* raised dark surface      */
+  --ink-3:      #2a2320;   /* dark hairline            */
+
+  --paper:      #f7f2e9;   /* warm ivory               */
+  --paper-2:    #efe7d9;   /* sunk paper surface       */
+  --paper-3:    #e2d7c4;   /* paper hairline           */
+
+  --red:        #a11c1c;   /* flyer crimson            */
+  --red-deep:   #7d1416;
+  --red-bright: #c02a24;
+
+  --brass:      #c9a45b;   /* accent / numerals        */
+  --brass-soft: #e0c48c;
+
+  --on-paper:        var(--ink);
+  --on-paper-muted:  #5b5148;
+  --on-ink:          #f4efe6;
+  --on-ink-muted:    #a89e91;
+
+  --focus: var(--brass);
+
+  /* — type ——————————————————————————————————— */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --step--1: clamp(0.875rem, 0.85rem + 0.12vw, 0.938rem);
+  --step-0:  clamp(1rem, 0.96rem + 0.2vw, 1.094rem);
+  --step-1:  clamp(1.125rem, 1.06rem + 0.32vw, 1.313rem);
+  --step-2:  clamp(1.375rem, 1.24rem + 0.66vw, 1.75rem);
+  --step-3:  clamp(1.75rem, 1.5rem + 1.2vw, 2.5rem);
+  --step-4:  clamp(2.25rem, 1.8rem + 2.2vw, 3.75rem);
+  --step-5:  clamp(3.5rem, 2rem + 6.2vw, 7.5rem); /* hero headline only */
+
+  /* — space —————————————————————————————————— */
+  --space-2xs: 0.375rem;
+  --space-xs:  0.625rem;
+  --space-sm:  1rem;
+  --space-md:  1.5rem;
+  --space-lg:  2.5rem;
+  --space-xl:  4rem;
+  --space-2xl: clamp(4rem, 3rem + 5vw, 8rem);
+
+  --shell: 78rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --header-h: 4rem;
+
+  --radius:    2px;
+  --radius-md: 4px;
+
+  --ease: cubic-bezier(0.22, 0.68, 0.24, 1);
+  --dur:  0.5s;
+
+  /* Film grain shared by every placeholder plate and the hero scrim. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+@media (min-width: 60rem) {
+  :root { --header-h: 4.75rem; }
+}
+
+/* Phones: the header carries a second row of section links, and the vertical
+   rhythm tightens so the page is not mostly padding on a small screen. */
+@media (max-width: 59.99rem) {
+  :root {
+    --header-h: 5.5rem;
+    --space-2xl: 2.75rem;
+    --space-xl: 2.25rem;
+  }
+}
+
+/* Placeholder-plate tones, keyed to each dish's real ingredients so the
+   site's colour rhythm survives the swap to photography. */
+.photo--ember   { --pl-a: #3d1e14; --pl-b: #150f0b; --pl-glow: #8a4526; }
+.photo--wheat   { --pl-a: #3a2c18; --pl-b: #16120c; --pl-glow: #8a6a30; }
+.photo--gold    { --pl-a: #402c10; --pl-b: #17110a; --pl-glow: #97702a; }
+.photo--amber   { --pl-a: #45280f; --pl-b: #180f09; --pl-glow: #a3642a; }
+.photo--jade    { --pl-a: #17311f; --pl-b: #0c1410; --pl-glow: #3f7a52; }
+.photo--lacquer { --pl-a: #451414; --pl-b: #170b0b; --pl-glow: #9c2f26; }
+.photo--broth   { --pl-a: #382a15; --pl-b: #14100b; --pl-glow: #8a6c33; }

@@ -1,0 +1,17 @@
+# Build output — Vercel regenerates this from src/ on every deploy.
+dist/
+
+# Not used (the project has zero dependencies) but harmless to guard.
+node_modules/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# NOTE: src/assets/ is deliberately NOT ignored. The photographs and the menu
+# PDF are inputs, not build artifacts — the build fails without them.
