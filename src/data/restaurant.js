@@ -24,6 +24,12 @@ export const brand = {
   descriptor: 'Vietnamese & Southeast Asian kitchen inside Hasty Market. Eat in or take out.',
 };
 
+/** Owner-supplied logo. Cropped square to the gold ring; displayed as a circle. */
+export const logo = {
+  mark: 'logo.png',
+  alt: 'Asian Food Take Out at Hasty Market',
+};
+
 export const contact = {
   /** Printed on the flyer AND shown on the Google listing. */
   phone: '(343) 998-8051',
@@ -245,19 +251,19 @@ export const menu = [
  * exactly 6 rows at 3 columns and 9 rows at 2, so the grid never ends on a hole.
  */
 export const gallery = [
-  { slot: 'g1', ref: '1A', alt: 'Close-up of Vietnamese subs with BBQ beef, pickled carrot and coriander', span: 'std', photo: 'sub-closeup.jpg', tone: 'ember' },
-  { slot: 'g2', ref: '1B', alt: 'Vietnamese subs wrapped in paper, filled with grilled meat, pickled carrot, cucumber and coriander', span: 'std', photo: 'sub-wrapped.jpg', tone: 'wheat' },
-  { slot: 'g3', ref: '1', alt: 'Deep fried spring rolls with sweet chilli dipping sauce', span: 'std', photo: 'spring-rolls.jpg', tone: 'gold' },
-  { slot: 'g4', ref: '2', alt: 'Deep fried shrimp rolls, one cut to show the shrimp filling, with sweet chilli dipping sauce', span: 'std', photo: 'shrimp-rolls.jpg', tone: 'amber' },
-  { slot: 'g5', ref: '3', alt: 'Jumbo deep fried vegetable spring rolls, one cut open to show the cabbage and carrot filling', span: 'std', photo: 'jumbo-veggie-rolls.jpg', tone: 'gold' },
-  { slot: 'g6', ref: '4', alt: 'Fresh rolls with shrimp, mint and peanut dipping sauce', span: 'wide', photo: 'fresh-rolls.jpg', tone: 'jade' },
-  { slot: 'g7', ref: '5', alt: 'Fresh vegetable rice paper rolls with vermicelli, lettuce and carrot, and peanut dipping sauce', span: 'std', photo: 'veggie-rolls.jpg', tone: 'jade' },
-  { slot: 'g8', ref: '6', alt: 'A plate of chicken wings', span: 'std', photo: 'chicken-wings.jpg', tone: 'lacquer' },
-  { slot: 'g9', ref: '7', alt: 'Pad Thai with shrimp, crushed peanuts and coriander', span: 'std', photo: 'pad-thai.jpg', tone: 'amber' },
-  { slot: 'g10', ref: '8', alt: 'A vermicelli bowl with grilled BBQ pork, spring rolls and fresh vegetables', span: 'tall', photo: 'vermicelli.jpg', tone: 'jade' },
-  { slot: 'g11', ref: '9', alt: 'Rice and egg noodle soup with shrimp, pork and quail eggs', span: 'wide', photo: 'noodle-soup.jpg', tone: 'broth' },
-  { slot: 'g12', ref: '10', alt: 'Fried rice with shrimp, peas, corn and spring onion', span: 'tall', photo: 'fried-rice.jpg', tone: 'wheat' },
-  { slot: 'g13', ref: '11', alt: 'Egg noodles and pork wontons in clear broth with bok choy', span: 'tall', photo: 'wonton-soup.jpg', tone: 'broth' },
+  { slot: 'g1', short: 'Vietnamese Sub', ref: '1A', alt: 'Close-up of Vietnamese subs with BBQ beef, pickled carrot and coriander', span: 'std', photo: 'sub-closeup.jpg', tone: 'ember' },
+  { slot: 'g2', short: 'Special Vietnamese Sub', ref: '1B', alt: 'Vietnamese subs wrapped in paper, filled with grilled meat, pickled carrot, cucumber and coriander', span: 'std', photo: 'sub-wrapped.jpg', tone: 'wheat' },
+  { slot: 'g3', short: 'Chicken Spring Rolls', ref: '1', alt: 'Deep fried spring rolls with sweet chilli dipping sauce', span: 'std', photo: 'spring-rolls.jpg', tone: 'gold' },
+  { slot: 'g4', short: 'Special Shrimp Rolls', ref: '2', alt: 'Deep fried shrimp rolls, one cut to show the shrimp filling, with sweet chilli dipping sauce', span: 'std', photo: 'shrimp-rolls.jpg', tone: 'amber' },
+  { slot: 'g5', short: 'JUMBO Veggie Spring Rolls', ref: '3', alt: 'Jumbo deep fried vegetable spring rolls, one cut open to show the cabbage and carrot filling', span: 'std', photo: 'jumbo-veggie-rolls.jpg', tone: 'gold' },
+  { slot: 'g6', short: 'Fresh Shrimp Rolls', ref: '4', alt: 'Fresh rolls with shrimp, mint and peanut dipping sauce', span: 'wide', photo: 'fresh-rolls.jpg', tone: 'jade' },
+  { slot: 'g7', short: 'Fresh Veggie Rolls', ref: '5', alt: 'Fresh vegetable rice paper rolls with vermicelli, lettuce and carrot, and peanut dipping sauce', span: 'std', photo: 'veggie-rolls.jpg', tone: 'jade' },
+  { slot: 'g8', short: 'Chicken Wings', ref: '6', alt: 'A plate of chicken wings', span: 'std', photo: 'chicken-wings.jpg', tone: 'lacquer' },
+  { slot: 'g9', short: 'Pad Thai', ref: '7', alt: 'Pad Thai with shrimp, crushed peanuts and coriander', span: 'std', photo: 'pad-thai.jpg', tone: 'amber' },
+  { slot: 'g10', short: 'Vermicelli Bowl', ref: '8', alt: 'A vermicelli bowl with grilled BBQ pork, spring rolls and fresh vegetables', span: 'tall', photo: 'vermicelli.jpg', tone: 'jade' },
+  { slot: 'g11', short: 'Rice & Egg Noodle Soup', ref: '9', alt: 'Rice and egg noodle soup with shrimp, pork and quail eggs', span: 'wide', photo: 'noodle-soup.jpg', tone: 'broth' },
+  { slot: 'g12', short: 'Fried Rice', ref: '10', alt: 'Fried rice with shrimp, peas, corn and spring onion', span: 'tall', photo: 'fried-rice.jpg', tone: 'wheat' },
+  { slot: 'g13', short: 'Egg Noodle Wonton Soup', ref: '11', alt: 'Egg noodles and pork wontons in clear broth with bok choy', span: 'tall', photo: 'wonton-soup.jpg', tone: 'broth' },
 ];
 
 /** Editorial imagery outside the menu. */
@@ -310,6 +316,9 @@ export const nav = [
 ];
 
 export const site = {
+  /** Absolute origin. og:image and canonical must be absolute for Facebook,
+   *  Instagram, iMessage, WhatsApp and Slack to resolve the preview card. */
+  url: 'https://asianfoodtakeout.ca',
   title: 'Asian Food Take Out at Hasty Market — Vietnamese Subs & Noodles, Carling Ave Ottawa',
   description:
     'Vietnamese subs, hand-rolled spring rolls, Pad Thai and noodle soups made to order inside Hasty Market at 2361 Carling Avenue, Ottawa. Eat in or take out. Kitchen open 11 AM – 9 PM. Call (343) 998-8051.',

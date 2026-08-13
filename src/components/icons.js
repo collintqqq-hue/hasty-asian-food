@@ -13,6 +13,8 @@ export const icons = {
   clock: wrap('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.2V12l3.2 1.9"/>'),
   arrow: wrap('<path d="M5 12h13"/><path d="m12.5 6.5 6 5.5-6 5.5"/>'),
   arrowUpRight: wrap('<path d="M8 16 16 8"/><path d="M9.5 8H16v6.5"/>'),
+  close: wrap('<path d="m6 6 12 12"/><path d="M18 6 6 18"/>'),
+  expand: wrap('<path d="M9 4H4v5"/><path d="M15 20h5v-5"/><path d="m4 4 6 6"/><path d="m20 20-6-6"/>'),
   dine: wrap(
     '<path d="M6.2 3v6a2.4 2.4 0 0 0 4.8 0V3"/><path d="M8.6 11.4V21"/><path d="M17.8 3c-1.6 1.9-2.4 4.1-2.4 6.3v2.6h4.4V3Z"/><path d="M17.8 11.9V21"/>'
   ),

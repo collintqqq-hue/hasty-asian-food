@@ -1,4 +1,4 @@
-import { site, brand, contact, location, hours, menu, offer } from '../data/restaurant.js';
+import { site, brand, logo, contact, location, hours, menu, offer } from '../data/restaurant.js';
 import {
   header,
   hero,
@@ -66,16 +66,28 @@ export function head() {
 <title>${site.title}</title>
 <meta name="description" content="${site.description}">
 <meta name="theme-color" content="${site.themeColor}">
-<link rel="canonical" href="./">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="canonical" href="${site.url}/">
 
+<link rel="icon" href="favicon.png" type="image/png" sizes="256x256">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Share card. og:image MUST be an absolute URL — Facebook, Instagram,
+     iMessage, WhatsApp and Slack all refuse to resolve a relative one, which is
+     why a link preview silently falls back to whatever image it can scrape. -->
 <meta property="og:type" content="restaurant">
 <meta property="og:site_name" content="${brand.name} at ${brand.host}">
-<meta property="og:title" content="${site.title}">
+<meta property="og:title" content="${brand.name} — at ${brand.host}">
 <meta property="og:description" content="${site.description}">
 <meta property="og:locale" content="${site.locale}">
+<meta property="og:url" content="${site.url}/">
+<meta property="og:image" content="${site.url}/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${brand.name} at ${brand.host}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${brand.name} — at ${brand.host}">
+<meta name="twitter:description" content="${site.description}">
+<meta name="twitter:image" content="${site.url}/og.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,13 +100,14 @@ ${structuredData()}`;
 }
 
 export function body(ctx = {}) {
-  return `<!-- Opening splash. Dismissed by a CSS animation, not JavaScript, so it
-     cannot strand a full-screen overlay if a script fails to run. -->
+  return `<!-- Opening splash: logo, a loading bar, then the whole panel slides
+     up and away. Rendered only when scripting is confirmed, and torn down three
+     independent ways — see .splash in components.css and initSplash in main.js.
+     A full-screen overlay that fails to clear would hide the entire site. -->
 <div class="splash" aria-hidden="true">
   <div class="splash__mark">
-    <span class="splash__name">${brand.name}</span>
-    <span class="splash__rule"></span>
-    <span class="splash__host">at ${brand.host}</span>
+    <img class="splash__logo" src="assets/photos/${logo.mark}" alt="" width="640" height="640">
+    <span class="splash__bar"><span class="splash__bar-fill"></span></span>
   </div>
 </div>
 

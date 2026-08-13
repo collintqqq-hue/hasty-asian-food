@@ -51,8 +51,93 @@ function initSplash() {
   if (!splash) return;
 
   const remove = () => splash.remove();
-  splash.addEventListener('animationend', remove, { once: true });
-  setTimeout(remove, 1500);
+
+  // animationend BUBBLES, and the logo and the loading bar inside finish well
+  // before the panel slides away — listening for any of them would tear the
+  // splash off mid-reveal. Only the panel's own exit counts.
+  splash.addEventListener('animationend', (e) => {
+    if (e.target === splash && e.animationName === 'splash-out') remove();
+  });
+
+  // Backstop if the exit animation never runs at all.
+  setTimeout(remove, 2200);
+}
+
+/* ───────────────────────── lightbox ───────────────────────── */
+
+/**
+ * Full-screen gallery viewer. The markup ships inert (`hidden`) and is only
+ * ever opened here, so with scripting off the gallery stays a plain grid.
+ */
+function initLightbox() {
+  const lb = document.querySelector('[data-lb]');
+  const triggers = [...document.querySelectorAll('[data-lightbox]')];
+  if (!lb || !triggers.length) return;
+
+  const slides = [...lb.querySelectorAll('[data-slide]')];
+  const counter = lb.querySelector('[data-lb-count]');
+  const panel = lb.querySelector('.lb__panel');
+  const closeBtn = lb.querySelector('[data-lb-close]');
+  let index = 0;
+  let lastFocused = null;
+
+  const show = (i) => {
+    index = (i + slides.length) % slides.length;
+    slides.forEach((s, n) => (s.hidden = n !== index));
+    if (counter) counter.textContent = `${index + 1} of ${slides.length}`;
+  };
+
+  function open(i) {
+    lastFocused = document.activeElement;
+    show(i);
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+    closeBtn?.focus();
+  }
+
+  function close() {
+    lb.hidden = true;
+    document.body.style.overflow = '';
+    // A pointer click never focuses the tile, so fall back to the trigger.
+    const target = lastFocused && lastFocused !== document.body ? lastFocused : triggers[index];
+    target?.focus();
+  }
+
+  triggers.forEach((t) => t.addEventListener('click', () => open(Number(t.dataset.lightbox))));
+  lb.querySelectorAll('[data-lb-close]').forEach((b) => b.addEventListener('click', close));
+  lb.querySelector('[data-lb-prev]')?.addEventListener('click', () => show(index - 1));
+  lb.querySelector('[data-lb-next]')?.addEventListener('click', () => show(index + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') return close();
+    if (e.key === 'ArrowLeft') return show(index - 1);
+    if (e.key === 'ArrowRight') return show(index + 1);
+    if (e.key !== 'Tab') return;
+
+    // Keep focus inside the dialog.
+    const focusable = [...panel.querySelectorAll('button')].filter((el) => el.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  // Swipe between dishes on touch.
+  let startX = null;
+  panel.addEventListener('touchstart', (e) => { startX = e.changedTouches[0].clientX; }, { passive: true });
+  panel.addEventListener('touchend', (e) => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 45) show(dx < 0 ? index + 1 : index - 1);
+    startX = null;
+  }, { passive: true });
 }
 
 /* ─────────────────────── menu category spy ────────────────────── */
@@ -141,4 +226,5 @@ function initSpy(linkSelector, targetSelector, activeClass = 'is-active') {
 initSplash();
 initReveal();
 initMenuSpy();
+initLightbox();
 initSpy('.nav__link', 'main > section[id]');

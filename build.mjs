@@ -81,9 +81,18 @@ async function buildScripts() {
   await copyFile(join(src, 'scripts', 'main.js'), join(out, 'scripts', 'main.js'));
 }
 
-/** Favicon lives at the site root, where browsers and crawlers expect it. */
-async function copyFavicon() {
-  await copyFile(join(src, 'assets', 'favicon.svg'), join(out, 'favicon.svg'));
+/**
+ * Brand assets go to the site ROOT. Crawlers and share-card scrapers look for
+ * /favicon.png and resolve og:image against the origin, so these cannot sit
+ * under assets/.
+ */
+async function copyBrand() {
+  for (const f of ['favicon.png', 'apple-touch-icon.png', 'og.jpg']) {
+    await copyFile(join(src, 'assets', 'brand', f), join(out, f));
+  }
+  // The logo is used inside the page, so it lives with the other imagery.
+  await mkdir(join(out, 'assets', 'photos'), { recursive: true });
+  await copyFile(join(src, 'assets', 'brand', 'logo.png'), join(out, 'assets', 'photos', 'logo.png'));
 }
 
 /** Every image slot in the data, so the build can report what is still empty. */
@@ -132,7 +141,7 @@ async function main() {
   const menuPdfSize = await copyMenuPdf();
   const [htmlBytes, cssBytes] = await Promise.all([buildHtml({ menuPdfSize }), buildStyles()]);
   await buildScripts();
-  await copyFavicon();
+  await copyBrand();
   const files = await copyPhotos();
   const p = reportPhotos(files);
 

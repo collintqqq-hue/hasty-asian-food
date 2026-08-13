@@ -19,7 +19,7 @@ src/data/restaurant.js      every fact on the site — the single source of trut
 src/components/             photo.js · icons.js · sections.js · page.js
 src/styles/                 tokens.css · base.css · components.css
 src/scripts/main.js         progressive enhancement only
-src/assets/favicon.svg      browser-tab icon, copied to the site root
+src/assets/brand/           logo, favicon, apple-touch-icon, og share card
 src/assets/photos/          drop photography here
 src/assets/menu/            the printed in-store flyer, as a PDF
 tools/flyer-to-pdf.mjs      crops a photo of the flyer into that PDF
@@ -99,9 +99,30 @@ not mostly padding.
 Desktop is untouched: single-row header, transparent over the hero then paper
 once scrolled, leader dots, sticky category bar, three-column gallery.
 
+### Brand assets and link previews
+
+`src/assets/brand/` holds the owner's logo and everything derived from it. The
+build copies favicon, apple-touch-icon and og.jpg to the **site root**, not
+under `assets/` — crawlers and share-card scrapers look for `/favicon.png` and
+resolve `og:image` against the origin.
+
+**`og:image` must be an absolute URL.** Facebook, Instagram, iMessage, WhatsApp
+and Slack all refuse to resolve a relative one, and silently fall back to
+scraping whatever image they can find on the page — which is why the link
+preview was showing the hero photo. The absolute origin lives in `site.url`; if
+the domain ever changes, change it there and everything follows.
+
+The share card is the logo centred on a 1200×630 black canvas. The canvas is
+pure black rather than `--ink` because the logo art has a solid black plate, and
+any other value shows a visible seam around it.
+
+Social platforms cache previews aggressively. After deploying, re-scrape at
+`developers.facebook.com/tools/debug/` to see the new card immediately.
+
 ### The splash screen
 
-A brand card covers the page for under a second on load. It is the most
+The logo, a loading bar that fills, then the whole panel slides up and away —
+under a second and a half in total. It is the most
 dangerous element on the site — if it fails to clear, nothing is visible — so it
 is deliberately over-engineered:
 
@@ -112,6 +133,24 @@ is deliberately over-engineered:
   removes it from the DOM, and a 1.5s hard timeout in case the animation never
   runs (reduced motion, background tab, animations disabled).
 - `prefers-reduced-motion` skips it entirely.
+- The `animationend` listener checks `e.animationName`. That event **bubbles**,
+  and the logo and loading bar inside finish long before the panel slides away —
+  listening for any of them tore the splash off mid-reveal.
+
+### The gallery lightbox
+
+Clicking a tile opens a full-screen viewer with the item number, the **full**
+menu name, its options and price, prev/next arrows, a counter, arrow-key and
+swipe support, focus trapping and Escape to close.
+
+The markup ships `hidden` and is only ever opened by script, so with JavaScript
+off the gallery stays a plain grid of pictures rather than a pile of dead
+controls.
+
+Tile captions are never truncated and carry no ellipsis. They use a **short
+label** (`short` in `gallery[]`) — a compression of the menu name, never a
+different dish. The complete name appears in the lightbox and in the menu, so
+nothing is lost.
 
 Two CSS ordering traps to know about if you edit this. Both cost real time:
 

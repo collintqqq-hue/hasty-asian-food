@@ -8,6 +8,7 @@ import {
   offer,
   menu,
   menuPdf,
+  logo,
   gallery,
   scenes,
   nav,
@@ -277,10 +278,13 @@ function menuItem(d) {
 export function gallerySection() {
   const tiles = gallery
     .map((g, i) => {
-      // The caption is read straight off the menu item, never re-typed, so a
-      // gallery tile can never disagree with the row it points at.
+      // Caption text is the short label; the full menu name and options appear
+      // in the lightbox. Nothing is truncated with an ellipsis anywhere.
       const d = byRef(g.ref);
-      return `<figure class="tile tile--${g.span}" data-reveal style="--i:${i % 4}">
+      const label = g.short || (d ? d.name : g.alt);
+      return `<li class="gallery__cell">
+      <button class="tile tile--${g.span}" type="button" data-lightbox="${i}"
+              aria-label="View ${esc(label)} larger" data-reveal style="--i:${i % 4}">
       ${photo({
         photo: g.photo,
         alt: g.alt,
@@ -290,13 +294,15 @@ export function gallerySection() {
         sizes: '(min-width:900px) 30vw, 92vw',
         className: 'photo--fill',
       })}
-      <figcaption class="tile__cap">
+      <span class="tile__cap">
         <span class="tile__name">
-          ${d ? `<span class="tile__ref">${esc(d.ref)}</span> ` : ''}${esc(d ? d.name : g.alt)}
+          ${d ? `<span class="tile__ref">${esc(d.ref)}</span> ` : ''}${esc(label)}
         </span>
         ${d ? `<span class="tile__price">${price(d.price)}</span>` : ''}
-      </figcaption>
-    </figure>`;
+      </span>
+      <span class="tile__zoom" aria-hidden="true">${icons.expand}</span>
+      </button>
+    </li>`;
     })
     .join('');
 
@@ -307,8 +313,48 @@ export function gallerySection() {
       <h2 class="h2" data-reveal>From the counter</h2>
     </header>
   </div>
-  <div class="shell gallery__grid">${tiles}</div>
+  <ul class="shell gallery__grid">${tiles}</ul>
+  ${lightbox()}
 </section>`;
+}
+
+/**
+ * Full-screen image viewer. Rendered inert in the markup and only opened by
+ * script, so with JavaScript off the gallery is still a plain grid of pictures
+ * rather than a pile of broken controls.
+ */
+function lightbox() {
+  const slides = gallery
+    .map((g, i) => {
+      const d = byRef(g.ref);
+      return `<figure class="lb__slide" data-slide="${i}" ${i ? 'hidden' : ''}>
+      ${
+        g.photo
+          ? `<img class="lb__img" src="assets/photos/${g.photo}" alt="${esc(g.alt)}" loading="lazy" decoding="async">`
+          : `<div class="lb__img lb__img--plate photo--${g.tone}" role="img" aria-label="${esc(g.alt)}"></div>`
+      }
+      <figcaption class="lb__cap">
+        <span class="lb__meta">
+          ${d ? `<span class="lb__ref">${esc(d.ref)}</span>` : ''}
+          <span class="lb__name">${esc(d ? d.name : g.alt)}</span>
+        </span>
+        ${d && d.options ? `<span class="lb__opts">${esc(d.options)}</span>` : ''}
+        ${d ? `<span class="lb__price">${price(d.price)}</span>` : ''}
+      </figcaption>
+    </figure>`;
+    })
+    .join('');
+
+  return `<div class="lb" data-lb hidden>
+    <div class="lb__scrim" data-lb-close></div>
+    <div class="lb__panel" role="dialog" aria-modal="true" aria-label="Gallery">
+      <button class="lb__btn lb__btn--close" type="button" aria-label="Close" data-lb-close>${icons.close}</button>
+      <button class="lb__btn lb__btn--prev" type="button" aria-label="Previous dish" data-lb-prev>${icons.arrow}</button>
+      <button class="lb__btn lb__btn--next" type="button" aria-label="Next dish" data-lb-next>${icons.arrow}</button>
+      <div class="lb__stage">${slides}</div>
+      <p class="lb__count" data-lb-count aria-live="polite"></p>
+    </div>
+  </div>`;
 }
 
 /* ──────────────────────────────  visit  ───────────────────────────── */
@@ -371,6 +417,8 @@ export function footer() {
   return `<footer class="footer">
   <div class="shell footer__grid">
     <div class="footer__brand">
+      <img class="footer__logo" src="assets/photos/${logo.mark}" alt="${esc(logo.alt)}"
+           width="640" height="640" loading="lazy" decoding="async">
       <p class="wordmark__name wordmark__name--lg">${esc(brand.name)}</p>
       <p class="footer__host">at ${esc(brand.host)}</p>
       <p class="footer__desc">${esc(brand.descriptor)}</p>

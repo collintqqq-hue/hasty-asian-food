@@ -17,43 +17,51 @@
   z-index: 200;
   display: grid;
   place-items: center;
-  background: var(--ink);
-  animation: splash-out 0.45s var(--ease) 0.5s forwards;
+  background: #000;
+  animation: splash-out 0.55s var(--ease) 0.95s forwards;
 }
+/* Slides the whole panel up and away rather than fading, which reads as a
+   curtain lifting off the site. */
 @keyframes splash-out {
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
+  to { transform: translateY(-100%); visibility: hidden; }
 }
 
 .splash__mark {
   display: grid;
   justify-items: center;
-  gap: 0.75rem;
+  gap: 1.5rem;
   padding-inline: var(--gutter);
-  text-align: center;
-  animation: splash-in 0.5s var(--ease) both;
+  animation: splash-in 0.6s var(--ease) both;
 }
 @keyframes splash-in {
-  from { opacity: 0; transform: translateY(0.5rem); }
+  from { opacity: 0; transform: scale(0.96); }
 }
 
-.splash__name {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 1.1rem + 2vw, 2.25rem);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  color: var(--on-ink);
+.splash__logo {
+  width: clamp(9rem, 40vw, 13rem);
+  height: auto;
+  border-radius: 50%;
 }
-.splash__rule {
-  width: 2.5rem;
-  height: 1px;
+
+.splash__bar {
+  display: block;
+  width: clamp(7rem, 30vw, 10rem);
+  height: 2px;
+  background: color-mix(in srgb, var(--brass) 22%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.splash__bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
   background: var(--brass);
+  transform-origin: left;
+  animation: splash-fill 0.95s var(--ease) forwards;
 }
-.splash__host {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--brass);
+@keyframes splash-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 /* No animation means no visual dismissal — skip the splash entirely. */
@@ -834,6 +842,8 @@
 
 .gallery__grid {
   display: grid;
+  list-style: none;
+  padding: 0;
   gap: 0.65rem;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-flow: dense;
@@ -842,12 +852,22 @@
   .gallery__grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
 }
 
+.gallery__cell { display: contents; }
+
 .tile {
   position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
   overflow: hidden;
+  border: 0;
   border-radius: var(--radius-md);
   min-height: 0;
   aspect-ratio: 1;
+  cursor: zoom-in;
+  text-align: left;
+  color: inherit;
+  font: inherit;
 }
 .tile .photo--fill { position: absolute; inset: 0; }
 
@@ -861,6 +881,24 @@
 }
 
 .tile:hover .photo img { transform: scale(1.05); }
+
+.tile__zoom {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: rgba(10, 8, 7, 0.5);
+  color: var(--on-ink);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+.tile__zoom .icon { width: 0.95rem; height: 0.95rem; }
+.tile:hover .tile__zoom,
+.tile:focus-visible .tile__zoom { opacity: 1; }
 
 .tile__cap {
   position: absolute;
@@ -879,15 +917,9 @@
   font-size: var(--step-0);
   line-height: 1.3;
   text-wrap: pretty;
-  /* Long menu names ("Rice & Egg Noodles Soup with BBQ Chicken, BBQ Beef…")
-     wrapped to twelve lines on a small tile and overflowed it entirely. Clamp
-     the visible lines; the full name stays in the DOM for screen readers, and
-     the image alt carries the full description. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
+  /* Never truncated. The caption uses a short label from the data (see
+     `short` in gallery[]) so the full text always fits; the complete menu name
+     appears in the lightbox and in the menu itself. */
 }
 
 /* Item number, matching the badge on the menu row so the two read as the same
@@ -1047,4 +1079,126 @@
     min-height: 2.75rem;
   }
   .footer__nav { gap: 0; }
+}
+
+/* ───────────────────────── lightbox ─────────────────────────── */
+
+/* Opened only by script. With JavaScript off it stays `hidden`, so the gallery
+   degrades to a plain grid of pictures rather than dead controls. */
+.lb { position: fixed; inset: 0; z-index: 300; }
+.lb[hidden] { display: none; }
+
+.lb__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 5, 4, 0.92);
+  backdrop-filter: blur(6px);
+}
+
+.lb__panel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  padding: clamp(3rem, 8vh, 5rem) clamp(0.75rem, 4vw, 3rem) clamp(1rem, 4vh, 2rem);
+}
+
+.lb__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 0;
+}
+
+.lb__slide { display: grid; justify-items: center; gap: var(--space-md); min-height: 0; }
+.lb__slide[hidden] { display: none; }
+
+.lb__img {
+  max-width: min(100%, 62rem);
+  max-height: 62vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+.lb__img--plate {
+  width: min(100%, 32rem);
+  aspect-ratio: 1;
+  background: linear-gradient(160deg, var(--pl-a), var(--pl-b));
+}
+
+.lb__cap {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  text-align: center;
+  color: var(--on-ink);
+  max-width: 42rem;
+}
+.lb__meta { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; justify-content: center; }
+.lb__ref {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--brass-soft);
+  background: rgba(201, 164, 91, 0.22);
+  border-radius: var(--radius);
+}
+.lb__name {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.lb__opts { color: var(--on-ink-muted); font-size: var(--step--1); }
+.lb__price .price { color: var(--brass-soft); font-size: var(--step-1); }
+
+.lb__count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--on-ink-muted);
+}
+
+.lb__btn {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  color: var(--on-ink);
+  background: rgba(244, 239, 230, 0.1);
+  border: 1px solid rgba(244, 239, 230, 0.18);
+  transition: background 0.2s var(--ease);
+}
+.lb__btn:hover { background: rgba(244, 239, 230, 0.2); }
+.lb__btn--close { top: clamp(0.75rem, 3vh, 1.5rem); right: clamp(0.75rem, 4vw, 1.5rem); }
+.lb__btn--prev { left: clamp(0.5rem, 3vw, 2rem); top: 50%; translate: 0 -50%; rotate: 180deg; }
+.lb__btn--next { right: clamp(0.5rem, 3vw, 2rem); top: 50%; translate: 0 -50%; }
+
+@media (max-width: 39.99rem) {
+  /* Arrows drop to the bottom on phones so they never sit over the picture. */
+  .lb__btn--prev, .lb__btn--next { top: auto; bottom: calc(1rem + env(safe-area-inset-bottom)); translate: none; }
+  .lb__btn--prev { left: 25%; }
+  .lb__btn--next { right: 25%; }
+  .lb__panel { padding-bottom: 5rem; }
+  .lb__img { max-height: 50vh; }
+  .lb__name { font-size: var(--step-1); }
+}
+
+/* The logo is a circle on a black plate, so it is masked to a circle and given
+   a brass hairline to sit cleanly on the footer's ink rather than showing a
+   black square edge. */
+.footer__logo {
+  width: 5rem;
+  height: 5rem;
+  margin-bottom: var(--space-sm);
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--brass) 30%, transparent);
 }
