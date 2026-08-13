@@ -127,7 +127,7 @@ export function offerStrip() {
 /* ──────────────────────────────  about  ───────────────────────────── */
 
 export function about() {
-  return `<section class="section about" id="about">
+  return `<section class="section section--ink about" id="about">
   <div class="shell about__grid">
     <div class="about__copy">
       <p class="eyebrow" data-reveal>The kitchen</p>
@@ -187,7 +187,7 @@ export function menuSection({ menuPdfSize } = {}) {
     )
     .join('');
 
-  return `<section class="section menu" id="menu" aria-labelledby="menu-heading">
+  return `<section class="section section--paper menu" id="menu" aria-labelledby="menu-heading">
   <div class="shell">
     <header class="section-head section-head--center">
       <h2 class="eyebrow" id="menu-heading" data-reveal>
@@ -300,7 +300,7 @@ export function gallerySection() {
     })
     .join('');
 
-  return `<section class="section gallery" id="gallery">
+  return `<section class="section section--ink gallery" id="gallery">
   <div class="shell">
     <header class="section-head">
       <p class="eyebrow" data-reveal>Gallery</p>
@@ -314,7 +314,7 @@ export function gallerySection() {
 /* ──────────────────────────────  visit  ───────────────────────────── */
 
 export function visit() {
-  return `<section class="section visit" id="visit">
+  return `<section class="section section--paper visit" id="visit">
   <div class="shell visit__grid">
     <div class="visit__copy">
       <p class="eyebrow" data-reveal>Visit</p>

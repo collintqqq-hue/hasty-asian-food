@@ -42,17 +42,31 @@ structured data can't drift from the page.
 Sections alternate between warm paper and near-black ink:
 
 ```
-hero (ink) → offer (red) → about (paper) → menu (ink) → gallery (paper) → visit (ink) → footer (ink)
+hero (ink) → offer (red) → about (ink) → menu (paper) → gallery (ink) → visit (paper) → footer (ink)
 ```
 
-With a dark hero and a dark footer and four sections between them, two same-toned
-bands have to touch somewhere. They touch at the end: Visit and the footer are
-one dark closing block, location flowing into contact. The footer sits a shade
-deeper (`--ink` against Visit's `--ink-2`) so the two still read as separate.
+The hero and About are both dark on purpose — the red offer band between them
+is the separator. The menu is paper because a long price list scans best on
+light, and the gallery is ink because photographs sit better on dark.
 
-If you add or remove a section, re-check this sequence — that is exactly how the
-double-paper gap appeared when the old featured section was removed, and the
-double-ink one when About was first used to patch it.
+**Tone is a switchable property, not a hand-painted one.** Each section carries
+`section--ink` or `section--paper`, which set a small group of variables:
+
+```
+--surface-bg  --surface-raised  --surface-fg  --surface-fg-muted
+--surface-line  --surface-accent  --surface-accent-soft
+```
+
+Everything inside a section resolves through those rather than naming `--ink`
+or `--paper` directly, so flipping a section is a one-word change instead of
+recolouring thirty properties. `:root` carries the light values as defaults so
+anything outside a toned section still resolves.
+
+If you flip a section, re-check the sequence above — and check contrast. Two
+rules (`.prose` and `.link-arrow`) live in files outside the section blocks and
+were left dark-on-dark by the first flip, at 2.4:1. They use the surface
+variables now, but the lesson generalises: anything styled outside a section
+block will not follow the tone unless it uses these variables.
 
 ### Mobile layout
 

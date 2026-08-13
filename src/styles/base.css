@@ -106,17 +106,58 @@ ul, ol { list-style: none; padding: 0; }
 }
 
 .prose p + p { margin-top: 1em; }
-.prose { color: var(--on-paper-muted); font-size: var(--step-1); line-height: 1.65; }
-.prose strong { color: var(--on-paper); font-weight: 600; }
+.prose { color: var(--surface-fg-muted); font-size: var(--step-1); line-height: 1.65; }
+.prose strong { color: var(--surface-fg); font-weight: 600; }
 
-/* — dark sections ——————————————————————————————— */
-.on-dark {
-  background: var(--ink);
-  color: var(--on-ink);
+/* Defaults, so anything using a surface variable outside a toned section still
+   resolves to the light treatment rather than to nothing. */
+:root {
+  --surface-bg: var(--paper);
+  --surface-raised: var(--paper-2);
+  --surface-fg: var(--on-paper);
+  --surface-fg-muted: var(--on-paper-muted);
+  --surface-line: var(--paper-3);
+  --surface-accent: var(--red);
+  --surface-accent-soft: var(--red-deep);
 }
-.on-dark .h2 { color: var(--on-ink); }
-.on-dark .eyebrow { color: var(--brass); }
-.on-dark .section-head__lede { color: var(--on-ink-muted); }
+
+/* — section tones ————————————————————————————————
+   Every section declares one of these two. All the colours inside a section
+   resolve through these variables rather than naming --ink or --paper directly,
+   so flipping a section from light to dark is a one-word change on the section
+   instead of recolouring thirty properties. */
+
+.section--ink {
+  --surface-bg: var(--ink);
+  --surface-raised: var(--ink-2);
+  --surface-fg: var(--on-ink);
+  --surface-fg-muted: var(--on-ink-muted);
+  --surface-line: var(--ink-3);
+  --surface-accent: var(--brass);
+  --surface-accent-soft: var(--brass-soft);
+}
+
+.section--paper {
+  --surface-bg: var(--paper);
+  --surface-raised: var(--paper-2);
+  --surface-fg: var(--on-paper);
+  --surface-fg-muted: var(--on-paper-muted);
+  --surface-line: var(--paper-3);
+  --surface-accent: var(--red);
+  --surface-accent-soft: var(--red-deep);
+}
+
+.section--ink,
+.section--paper {
+  background: var(--surface-bg);
+  color: var(--surface-fg);
+}
+.section--ink .h2,
+.section--paper .h2 { color: var(--surface-fg); }
+.section--ink .eyebrow,
+.section--paper .eyebrow { color: var(--surface-accent); }
+.section--ink .section-head__lede,
+.section--paper .section-head__lede { color: var(--surface-fg-muted); }
 
 /* — utilities ——————————————————————————————————— */
 .u-sr {

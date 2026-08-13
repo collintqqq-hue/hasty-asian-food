@@ -262,7 +262,18 @@ export const gallery = [
 
 /** Editorial imagery outside the menu. */
 export const scenes = {
-  hero: { slot: 'hero', photo: null, tone: 'ember', alt: 'Vietnamese sub and fresh rolls on a warm wooden counter' },
+  /**
+   * Generated. Composed for this slot specifically: the food sits in the right
+   * third and the left half falls to black, because the hero scrim darkens the
+   * bottom and left and the headline sits there. Anything centred would fight
+   * the type. It is the LCP image, so it is kept to 120 kB.
+   */
+  hero: {
+    slot: 'hero',
+    photo: 'hero.jpg',
+    tone: 'ember',
+    alt: 'A Vietnamese sub with BBQ pork and pickled vegetables beside fresh shrimp rolls, lit by low warm light on a dark wooden table',
+  },
   /**
    * Intended shot: four signature dishes plated together as one spread.
    * Prompt is in PHOTOGRAPHY-BRIEF.md under `about`. Generated at 3:4 by
