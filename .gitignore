@@ -15,3 +15,8 @@ desktop.ini
 
 # NOTE: src/assets/ is deliberately NOT ignored. The photographs and the menu
 # PDF are inputs, not build artifacts — the build fails without them.
+
+# Retired photos and the owner's uncropped phone originals. Kept on disk as a
+# working archive; the build ignores this folder and the repo doesn't need
+# 27 MB of PNG screenshots. Anything the site actually uses lives one level up.
+src/assets/photos/unused/

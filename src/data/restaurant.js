@@ -123,12 +123,12 @@ export const menu = [
         options: null,
         price: '8.95',
         /**
-         * A photograph of the kitchen's Vietnamese subs, not of the Special
-         * specifically — the flyer never says how 1B differs from 1A. Real and
-         * representative rather than generated and invented. If the owner says
-         * what is in the Special, revisit both this and the alt text.
+         * The owner's own photo of subs being built at the counter: cold cuts,
+         * pâté and shredded pork floss. That filling is what a Vietnamese
+         * "special" sub is, so this is very likely 1B — but the flyer still
+         * never says, so confirm before treating it as settled.
          */
-        photo: 'sub-wrapped.jpg',
+        photo: 'sub-special.jpg',
         tone: 'wheat',
       },
     ],
@@ -207,7 +207,9 @@ export const menu = [
         name: 'Vermicelli with BBQ Chicken, BBQ Beef, Pork with Vegetables',
         options: 'two choices',
         price: '16.95',
-        photo: 'vermicelli.jpg',
+        /** The owner's own bowl. Shows exactly what arrives, which matters
+         *  more on a menu row than a tidier stock photograph does. */
+        photo: 'vermicelli-real.jpg',
         tone: 'jade',
         note: 'Add more items — $4.50 for each',
       },
@@ -216,7 +218,8 @@ export const menu = [
         name: 'Rice & Egg Noodles Soup with BBQ Chicken, BBQ Beef, BBQ Pork or Shrimp',
         options: 'two choices',
         price: '16.95',
-        photo: 'noodle-soup.jpg',
+        /** Owner's own bowl, replacing a stock photo upscaled from 672x425. */
+        photo: 'noodle-soup-real.jpg',
         tone: 'broth',
       },
       {
@@ -252,7 +255,7 @@ export const menu = [
  */
 export const gallery = [
   { slot: 'g1', short: 'Vietnamese Sub', ref: '1A', alt: 'Close-up of Vietnamese subs with BBQ beef, pickled carrot and coriander', span: 'std', photo: 'sub-closeup.jpg', tone: 'ember' },
-  { slot: 'g2', short: 'Special Vietnamese Sub', ref: '1B', alt: 'Vietnamese subs wrapped in paper, filled with grilled meat, pickled carrot, cucumber and coriander', span: 'std', photo: 'sub-wrapped.jpg', tone: 'wheat' },
+  { slot: 'g2', short: 'Special Vietnamese Sub', ref: '1B', alt: 'A stack of Vietnamese subs filled with cold cuts, pâté and shredded pork', span: 'std', photo: 'sub-special.jpg', tone: 'wheat' },
   { slot: 'g3', short: 'Chicken Spring Rolls', ref: '1', alt: 'Deep fried spring rolls with sweet chilli dipping sauce', span: 'std', photo: 'spring-rolls.jpg', tone: 'gold' },
   { slot: 'g4', short: 'Special Shrimp Rolls', ref: '2', alt: 'Deep fried shrimp rolls, one cut to show the shrimp filling, with sweet chilli dipping sauce', span: 'std', photo: 'shrimp-rolls.jpg', tone: 'amber' },
   { slot: 'g5', short: 'JUMBO Veggie Spring Rolls', ref: '3', alt: 'Jumbo deep fried vegetable spring rolls, one cut open to show the cabbage and carrot filling', span: 'std', photo: 'jumbo-veggie-rolls.jpg', tone: 'gold' },
@@ -260,8 +263,8 @@ export const gallery = [
   { slot: 'g7', short: 'Fresh Veggie Rolls', ref: '5', alt: 'Fresh vegetable rice paper rolls with vermicelli, lettuce and carrot, and peanut dipping sauce', span: 'std', photo: 'veggie-rolls.jpg', tone: 'jade' },
   { slot: 'g8', short: 'Chicken Wings', ref: '6', alt: 'A plate of chicken wings', span: 'std', photo: 'chicken-wings.jpg', tone: 'lacquer' },
   { slot: 'g9', short: 'Pad Thai', ref: '7', alt: 'Pad Thai with shrimp, crushed peanuts and coriander', span: 'std', photo: 'pad-thai.jpg', tone: 'amber' },
-  { slot: 'g10', short: 'Vermicelli Bowl', ref: '8', alt: 'A vermicelli bowl with grilled BBQ pork, spring rolls and fresh vegetables', span: 'tall', photo: 'vermicelli.jpg', tone: 'jade' },
-  { slot: 'g11', short: 'Rice & Egg Noodle Soup', ref: '9', alt: 'Rice and egg noodle soup with shrimp, pork and quail eggs', span: 'wide', photo: 'noodle-soup.jpg', tone: 'broth' },
+  { slot: 'g10', short: 'Vermicelli Bowl', ref: '8', alt: 'A vermicelli bowl with grilled BBQ pork, spring rolls and fresh vegetables', span: 'tall', photo: 'vermicelli-real.jpg', tone: 'jade' },
+  { slot: 'g11', short: 'Rice & Egg Noodle Soup', ref: '9', alt: 'Noodle soup with grilled pork, bok choy, coriander and fried shallots', span: 'wide', photo: 'noodle-soup-real.jpg', tone: 'broth' },
   { slot: 'g12', short: 'Fried Rice', ref: '10', alt: 'Fried rice with shrimp, peas, corn and spring onion', span: 'tall', photo: 'fried-rice.jpg', tone: 'wheat' },
   { slot: 'g13', short: 'Egg Noodle Wonton Soup', ref: '11', alt: 'Egg noodles and pork wontons in clear broth with bok choy', span: 'tall', photo: 'wonton-soup.jpg', tone: 'broth' },
 ];
