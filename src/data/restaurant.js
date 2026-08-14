@@ -253,6 +253,13 @@ export const menu = [
  * `span` sums to 18 grid cells (3 tall x2 + 2 wide x2 + 8 std), which fills
  * exactly 6 rows at 3 columns and 9 rows at 2, so the grid never ends on a hole.
  */
+/**
+ * The shaped tiles crop hard: `wide` is 2:1 and `tall` is roughly 1:2, while a
+ * menu thumbnail is square. A phone photo of a round bowl cannot satisfy both,
+ * so items 8 and 9 ship two cuts of the same frame — the square one on the menu
+ * row, a slot-shaped one here. Every tile below keeps at least 65% of its
+ * photograph visible; check that before moving a photo between slots.
+ */
 export const gallery = [
   { slot: 'g1', short: 'Vietnamese Sub', ref: '1A', alt: 'Close-up of Vietnamese subs with BBQ beef, pickled carrot and coriander', span: 'std', photo: 'sub-closeup.jpg', tone: 'ember' },
   { slot: 'g2', short: 'Special Vietnamese Sub', ref: '1B', alt: 'A stack of Vietnamese subs filled with cold cuts, pâté and shredded pork', span: 'std', photo: 'sub-special.jpg', tone: 'wheat' },
@@ -263,8 +270,8 @@ export const gallery = [
   { slot: 'g7', short: 'Fresh Veggie Rolls', ref: '5', alt: 'Fresh vegetable rice paper rolls with vermicelli, lettuce and carrot, and peanut dipping sauce', span: 'std', photo: 'veggie-rolls.jpg', tone: 'jade' },
   { slot: 'g8', short: 'Chicken Wings', ref: '6', alt: 'A plate of chicken wings', span: 'std', photo: 'chicken-wings.jpg', tone: 'lacquer' },
   { slot: 'g9', short: 'Pad Thai', ref: '7', alt: 'Pad Thai with shrimp, crushed peanuts and coriander', span: 'std', photo: 'pad-thai.jpg', tone: 'amber' },
-  { slot: 'g10', short: 'Vermicelli Bowl', ref: '8', alt: 'A vermicelli bowl with grilled BBQ pork, spring rolls and fresh vegetables', span: 'tall', photo: 'vermicelli-real.jpg', tone: 'jade' },
-  { slot: 'g11', short: 'Rice & Egg Noodle Soup', ref: '9', alt: 'Noodle soup with grilled pork, bok choy, coriander and fried shallots', span: 'wide', photo: 'noodle-soup-real.jpg', tone: 'broth' },
+  { slot: 'g10', short: 'Vermicelli Bowl', ref: '8', alt: 'A vermicelli bowl with grilled pork, shrimp, spring rolls, pickled vegetables and bean sprouts', span: 'tall', photo: 'vermicelli-tall.jpg', tone: 'jade' },
+  { slot: 'g11', short: 'Rice & Egg Noodle Soup', ref: '9', alt: 'Noodle soup with grilled pork, bok choy, coriander and fried shallots', span: 'wide', photo: 'noodle-soup-wide.jpg', tone: 'broth' },
   { slot: 'g12', short: 'Fried Rice', ref: '10', alt: 'Fried rice with shrimp, peas, corn and spring onion', span: 'tall', photo: 'fried-rice.jpg', tone: 'wheat' },
   { slot: 'g13', short: 'Egg Noodle Wonton Soup', ref: '11', alt: 'Egg noodles and pork wontons in clear broth with bok choy', span: 'tall', photo: 'wonton-soup.jpg', tone: 'broth' },
 ];
