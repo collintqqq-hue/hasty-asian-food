@@ -5,11 +5,11 @@ one on the **window**. These are the candidates — pick one of each.
 
 | File | For | What it says | Ready? |
 | --- | --- | --- | --- |
+| `POSTER-two-kitchens.jpg` | Handbill / board | Full info, both menus | **Yes** |
 | `ROAD-A-vietnamese.jpg` | Roadside | One hero sub. "VIETNAMESE SUBS" | **Yes** |
-| `ROAD-B-everything.jpg` | Roadside | Both menus. "ASIAN FOOD & MORE" | Photo shows pizza |
+| `ROAD-B-everything.jpg` | Roadside | Both menus. "ASIAN FOOD & MORE" | **Yes** |
 | `WINDOW-A-asian.jpg` | Window | Asian menu, dish list, hours | **Yes** |
 | `WINDOW-B-comfort.jpg` | Window | Burgers/hot dogs/poutine, hours | Photo shows pizza |
-| `POSTER-two-kitchens.jpg` | Handbill / board | Full info, both menus | Photo shows pizza |
 | `05-business-card-with-bleed.jpg` | Print shop | Card with bleed | **Yes** |
 | `05-business-card-trim.jpg` | Preview only | Card as cut | **Yes** |
 
@@ -23,45 +23,35 @@ the two menus it joins the Vietnamese line rather than standing among the
 burgers and poutine. On the road signs, which have only one "and also" line, it
 leads that line.
 
-**Three pieces still show pizza in the photograph.** The type is drawn here in
-Python, but the food photography is generated, and `p3-mixed.png` and
-`p2-comfort.png` each contain pizza that cannot be typeset away:
+`p3-mixed.png` has been **regenerated without pizza** — the pizza pan and the
+slice are now two vermicelli bowls, and everything else in the frame is
+unchanged. That fixes both pieces that used it, `POSTER-two-kitchens` and
+`ROAD-B`. The original pizza version is in git history at commit `0e7ffcb` if
+it is ever needed back.
 
-- `p3-mixed.png` — a pizza pan top right and a large slice centre right
-  (used by `ROAD-B` and `POSTER-two-kitchens`)
-- `p2-comfort.png` — two slices centre right (used by `WINDOW-B`)
+**One piece still shows pizza: `WINDOW-B-comfort.jpg`.** Its background
+`p2-comfort.png` has two slices centre right. Its *copy* no longer mentions
+pizza, so the sign contradicts itself and should not be printed as-is. It was
+left alone deliberately — only the poster was asked for. Fixing it is the same
+one-step edit described below, pointed at `p2-comfort.png`.
 
-Regenerating those two frames needs Higgsfield credits. Nothing else is
-blocked: `p4-roadsign.png`, `p1-asian.png` and `card-bg.png` never had pizza in
-them, so `ROAD-A`, `WINDOW-A` and the business card are finished and printable
-as they stand — one complete roadside option and one complete window option.
+### How the frame was fixed, and how to fix the next one
 
-Compositing a real photo of a vermicelli bowl over the pizza was tried and
-rejected: in both owner photos the bowl runs off the edge of the frame, so
-there is no whole bowl to cut out, and a half bowl dropped into a flat-lay
-reads as a mistake at print size.
+Edit the existing frame rather than generating a new one, so only the pizza
+changes and the rest of the composition survives. Model `nano_banana_pro`
+(`nano_banana_2`), 3:4, 2K, with the frame itself as the input image. Two
+things have to be spelled out or the model gets them wrong:
 
-### The regeneration, ready to run
+1. **Name every dish that must stay, individually.** The first attempt said
+   "keep every other element" and the model silently deleted the cheeseburger —
+   on a poster that advertises burgers. Listing the cheeseburger explicitly,
+   with its description and position, fixed it on the retry.
+2. **Say the lower third stays empty dark table.** The type is bottom-anchored
+   into that band; a frame with food low in the composition puts the phone
+   number on top of a burger.
 
-Edit `p3-mixed.png` rather than generating a new frame, so only the pizza
-changes and the rest of the composition survives. Model `nano_banana_pro`,
-3:4, 2K, with `p3-mixed.png` as the input image:
-
-> Using the supplied photograph, remove the two pepperoni pizza items — the
-> pizza pan at the top right edge and the large pizza slice at centre right —
-> and replace them with Vietnamese vermicelli bowls: rice vermicelli topped
-> with sliced grilled pork, a crisp fried spring roll, shredded lettuce, bean
-> sprouts, julienned pickled carrot and daikon, cucumber, fresh herbs and
-> crushed peanuts, in wide shallow bowls. Match the existing overhead flat-lay
-> perspective, the warm directional lighting and the soft shadows, and the dark
-> walnut table. Keep every other element exactly as it is: the banh mi at top
-> left, the plate of fresh shrimp rolls with peanut dipping sauce, the
-> cheeseburger, the poutine, and the pho bowl at bottom left. Keep the lower
-> third of the frame empty dark table — no food, no text.
-
-Save the result over `raw/p3-mixed.png` and re-run the script. The empty lower
-band matters: the type is bottom-anchored into it, and a frame with food low in
-the composition will put the phone number on top of a burger.
+Also add "no text or lettering anywhere in the image" — image models like to
+invent signage, and this frame sits under real typesetting.
 
 ## Why the two are laid out differently
 
