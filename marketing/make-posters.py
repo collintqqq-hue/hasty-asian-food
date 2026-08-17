@@ -107,22 +107,6 @@ def rule(draw, y, W, width_frac=0.16, color=BRASS, thickness=3):
     draw.rectangle([W / 2 - half, y, W / 2 + half, y + thickness], fill=color)
 
 
-def footer_block(draw, W, y, big_site=True):
-    """Website, phone, address, hours — the part that has to be right."""
-    f_site = font(SANS_BOLD, int(W * (0.062 if big_site else 0.05)))
-    f_ph = font(SERIF_BOLD, int(W * 0.055))
-    f_sm = font(SANS, int(W * 0.026))
-
-    centered(draw, y, SITE, f_site, BRASS_SOFT, W, tracking=W * 0.001)
-    y += f_site.size * 1.35
-    centered(draw, y, PHONE, f_ph, CREAM, W)
-    y += f_ph.size * 1.5
-    centered(draw, y, ADDRESS, f_sm, CREAM, W, tracking=W * 0.0012)
-    y += f_sm.size * 1.55
-    centered(draw, y, HOURS, f_sm, BRASS, W, tracking=W * 0.0022)
-    return y + f_sm.size
-
-
 # ─────────────────────────── layouts ───────────────────────────
 #
 # Both signs sit ON the building, so the street address is dead weight on each:
@@ -247,6 +231,37 @@ def window_sign(src, out_name, kicker, headline_lines, items):
     render(src, out_name, build, 0.40, 0.44)
 
 
+def full_poster(src, out_name, kicker, headline_lines, items):
+    """
+    The full-information piece: logo, kicker, headline, dish lists, and the
+    complete footer down to the hours. Unlike the two signs it is NOT read at
+    speed or through glass — it is a handbill or a board someone stands in
+    front of, so it can afford the address and the phone number.
+    """
+    def build(W, scale):
+        rows = [("logo", int(W * 0.135 * scale), int(W * 0.030 * scale))]
+        rows.append(("text", kicker, font(SANS_BOLD, int(W * 0.024 * scale)), BRASS,
+                     W * 0.006 * scale, int(W * 0.030 * scale)))
+        fh = font(SERIF_BOLD, int(W * 0.093 * scale))
+        for i, line in enumerate(headline_lines):
+            gap = int(fh.size * 0.14) if i < len(headline_lines) - 1 else int(W * 0.028 * scale)
+            rows.append(("text", line, fh, CREAM, 0, gap))
+        rows.append(("rule", int(W * 0.020 * scale)))
+        fi = font(SERIF_ITALIC, int(W * 0.038 * scale))
+        for i, line in enumerate(items):
+            gap = int(fi.size * 0.34) if i < len(items) - 1 else int(W * 0.040 * scale)
+            rows.append(("text", line, fi, BRASS_SOFT, 0, gap))
+        rows.append(("text", SITE, font(SANS_BOLD, int(W * 0.060 * scale)), BRASS_SOFT,
+                     W * 0.001, int(W * 0.016 * scale)))
+        rows.append(("text", PHONE, font(SERIF_BOLD, int(W * 0.054 * scale)), CREAM,
+                     0, int(W * 0.026 * scale)))
+        fsm = font(SANS, int(W * 0.026 * scale))
+        rows.append(("text", ADDRESS, fsm, CREAM, W * 0.0012, int(W * 0.016 * scale)))
+        rows.append(("text", HOURS, fsm, BRASS, W * 0.0022, 0))
+        return rows
+    render(src, out_name, build, 0.42, 0.47)
+
+
 def business_card(src):
     """3.5 x 2 in at 300 dpi, plus 1/8 in bleed all round."""
     BLEED = 38
@@ -308,12 +323,16 @@ def business_card(src):
     print(f"  05-business-card  {W}x{H} (bleed) and {TW}x{TH} (trim)")
 
 
+# PIZZA REMOVED — see marketing/README.md. Vermicelli takes its place in
+# the copy. Vermicelli is a Vietnamese dish (menu item 8), so it joins the
+# Vietnamese line rather than standing among the burgers and poutine; on the
+# road signs, where there is only one "and also" line, it leads that line.
 print("building sign options\n")
 print(" ROAD — read from a moving car")
 road_sign("p4-roadsign.png", "ROAD-A-vietnamese.jpg",
-          "VIETNAMESE", "SUBS", "BURGERS · PIZZA · POUTINE")
+          "VIETNAMESE", "SUBS", "VERMICELLI · BURGERS · POUTINE")
 road_sign("p3-mixed.png", "ROAD-B-everything.jpg",
-          "ASIAN FOOD", "& MORE", "SUBS · BURGERS · PIZZA · POUTINE")
+          "ASIAN FOOD", "& MORE", "SUBS · VERMICELLI · BURGERS · POUTINE")
 
 print("\n WINDOW — read standing at the glass")
 window_sign("p1-asian.png", "WINDOW-A-asian.jpg",
@@ -324,8 +343,15 @@ window_sign("p1-asian.png", "WINDOW-A-asian.jpg",
 window_sign("p2-comfort.png", "WINDOW-B-comfort.jpg",
             "NOW SERVING",
             ["Burgers", "& More"],
-            ["Burgers  ·  Hot Dogs  ·  Pizza",
+            ["Burgers  ·  Hot Dogs",
              "Poutine  ·  Fries"])
+
+print("\n POSTER — full information, read standing still")
+full_poster("p3-mixed.png", "POSTER-two-kitchens.jpg",
+            INSIDE,
+            ["Two Kitchens.", "One Counter."],
+            ["Vietnamese Subs  ·  Rolls  ·  Vermicelli",
+             "Burgers  ·  Hot Dogs  ·  Poutine"])
 
 print()
 business_card("card-bg.png")

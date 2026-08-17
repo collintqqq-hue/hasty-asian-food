@@ -1,18 +1,45 @@
 # Sign options
 
 Two signs are going up: one **roadside**, on the road outside the building, and
-one on the **window**. These are four candidates — pick one of each.
+one on the **window**. These are the candidates — pick one of each.
 
-| File | For | What it says |
-| --- | --- | --- |
-| `ROAD-A-vietnamese.jpg` | Roadside | One hero sub. "VIETNAMESE SUBS" |
-| `ROAD-B-everything.jpg` | Roadside | Both menus. "ASIAN FOOD & MORE" |
-| `WINDOW-A-asian.jpg` | Window | Asian menu, dish list, hours |
-| `WINDOW-B-comfort.jpg` | Window | Burgers/pizza/poutine, dish list, hours |
-| `05-business-card-with-bleed.jpg` | Print shop | Card with bleed |
-| `05-business-card-trim.jpg` | Preview only | Card as cut |
+| File | For | What it says | Ready? |
+| --- | --- | --- | --- |
+| `ROAD-A-vietnamese.jpg` | Roadside | One hero sub. "VIETNAMESE SUBS" | **Yes** |
+| `ROAD-B-everything.jpg` | Roadside | Both menus. "ASIAN FOOD & MORE" | Photo shows pizza |
+| `WINDOW-A-asian.jpg` | Window | Asian menu, dish list, hours | **Yes** |
+| `WINDOW-B-comfort.jpg` | Window | Burgers/hot dogs/poutine, hours | Photo shows pizza |
+| `POSTER-two-kitchens.jpg` | Handbill / board | Full info, both menus | Photo shows pizza |
+| `05-business-card-with-bleed.jpg` | Print shop | Card with bleed | **Yes** |
+| `05-business-card-trim.jpg` | Preview only | Card as cut | **Yes** |
 
-All 1792 × 2400 px, 3:4 portrait, tagged 300 dpi.
+All signs 1792 × 2400 px, 3:4 portrait, tagged 300 dpi.
+
+## Pizza is out; vermicelli is in
+
+Every line of **copy** has been updated — no piece mentions pizza any more.
+Vermicelli is a Vietnamese dish (menu item 8), so on the pieces that separate
+the two menus it joins the Vietnamese line rather than standing among the
+burgers and poutine. On the road signs, which have only one "and also" line, it
+leads that line.
+
+**Three pieces still show pizza in the photograph.** The type is drawn here in
+Python, but the food photography is generated, and `p3-mixed.png` and
+`p2-comfort.png` each contain pizza that cannot be typeset away:
+
+- `p3-mixed.png` — a pizza pan top right and a large slice centre right
+  (used by `ROAD-B` and `POSTER-two-kitchens`)
+- `p2-comfort.png` — two slices centre right (used by `WINDOW-B`)
+
+Regenerating those two frames needs Higgsfield credits. Nothing else is
+blocked: `p4-roadsign.png`, `p1-asian.png` and `card-bg.png` never had pizza in
+them, so `ROAD-A`, `WINDOW-A` and the business card are finished and printable
+as they stand — one complete roadside option and one complete window option.
+
+Compositing a real photo of a vermicelli bowl over the pizza was tried and
+rejected: in both owner photos the bowl runs off the edge of the frame, so
+there is no whole bowl to cut out, and a half bowl dropped into a flat-lay
+reads as a mistake at print size.
 
 ## Why the two are laid out differently
 
@@ -44,8 +71,8 @@ but do not promise a 4-foot sign at 300 dpi from these files.
 
 ## What is deliberately not on them
 
-**No prices.** None were supplied for the burgers, hot dogs, pizza or poutine,
-so any number would have been invented — and a sign outlives a price list.
+**No prices.** None were supplied for the burgers, hot dogs or poutine, so any
+number would have been invented — and a sign outlives a price list.
 
 **Hours read "KITCHEN 11 AM – 9 PM", not "OPEN DAILY".** The flyer gives the
 times but never says which days.
